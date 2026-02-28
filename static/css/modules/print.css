@@ -1,0 +1,177 @@
+.print-doc-shell {
+  background: linear-gradient(180deg, #f7fbfa 0%, #edf6f4 100%);
+}
+
+.print-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.print-doc {
+  max-width: 930px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #cfe1de;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 16px 24px -18px rgba(8, 30, 34, 0.52);
+}
+
+.print-doc-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #d8e7e4;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.print-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.print-brand-logo {
+  width: 60px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.print-brand h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #0f4b4f;
+}
+
+.print-brand span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6f8e92;
+}
+
+.print-meta h1 {
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+  color: #10353a;
+}
+
+.print-meta p {
+  margin: 2px 0;
+  font-size: 0.92rem;
+  color: #2c4f54;
+}
+
+.print-section {
+  margin-top: 14px;
+}
+
+.print-section h2 {
+  margin: 0 0 8px;
+  font-size: 1.02rem;
+  color: #0f4a4e;
+}
+
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.print-table th,
+.print-table td {
+  border: 1px solid #d5e5e2;
+  padding: 7px 8px;
+  vertical-align: top;
+  font-size: 0.9rem;
+}
+
+.print-table th {
+  background: #ecf7f5;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: #24484e;
+}
+
+.print-table td:first-child,
+.print-table th:first-child {
+  width: 44px;
+  text-align: center;
+}
+
+.print-table td:last-child,
+.print-table th:last-child {
+  width: 150px;
+}
+
+@media (max-width: 980px) {
+  .print-doc-head {
+    flex-direction: column;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  .topbar,
+  .flash-wrap,
+  .print-toolbar {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  .page-shell {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .print-doc-shell {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+  }
+
+  .print-doc {
+    max-width: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .print-doc-head {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .print-meta {
+    margin-left: auto !important;
+    text-align: right !important;
+  }
+
+  .print-section,
+  .print-table,
+  .print-table tr,
+  .print-table td,
+  .print-table th {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+

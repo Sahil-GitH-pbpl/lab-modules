@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel">
+    <div class="panel-head">
+      <h1 class="panel-title">{{ title }}</h1>
+      <p class="panel-sub">Time: {{ time_label }} | Filled At: {{ datetime_value }}</p>
+    </div>
+
+    <div class="detail-shell">
+      {% set ns = namespace(current='') %}
+      {% for field in fields %}
+        {% if field.section != ns.current %}
+          {% set ns.current = field.section %}
+          <h2 class="detail-section">{{ field.section }}</h2>
+        {% endif %}
+
+        <div class="detail-row">
+          <div class="detail-label">{{ field.label }}</div>
+          <div class="detail-value">
+            {% if field.type == 'checkbox' %}
+              <span class="pill {{ 'status-ok' if field.checked else 'status-muted' }}">
+                {{ 'Yes' if field.checked else 'No' }}
+              </span>
+            {% else %}
+              {{ field.value }}
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if can_verify %}
+      <form method="post">
+        <button class="btn btn-primary" type="submit">Mark as Verified</button>
+      </form>
+    {% else %}
+      <span class="pill status-ok">Already Verified</span>
+    {% endif %}
+  </section>
+{% endblock %}

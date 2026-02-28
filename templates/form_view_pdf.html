@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel print-doc-shell">
+    <div class="print-toolbar">
+      <button type="button" class="btn btn-primary" onclick="window.print()">Print / Save PDF</button>
+    </div>
+
+    <article class="print-doc">
+      <header class="print-doc-head">
+        <div class="print-brand">
+          <img src="{{ url_for('static', filename='images/Logoicon.png') }}" alt="Bhasin Lab" class="print-brand-logo" />
+          <div>
+            <h2>Dr Bhasin's Lab</h2>
+            <span>Trust of quality &amp; service</span>
+          </div>
+        </div>
+        <div class="print-meta">
+          <h1>{{ title }}</h1>
+          <p>Filled By: <strong>{{ filled_by }}</strong></p>
+          <p>Verified By: <strong>{{ verified_by }}</strong></p>
+          {% if time_label %}
+            <p>Time Slot: <strong>{{ time_label }}</strong></p>
+          {% endif %}
+          {% if filled_at %}
+            <p>Filled At: <strong>{{ filled_at }}</strong></p>
+          {% endif %}
+        </div>
+      </header>
+
+      {% for section in sections %}
+        <section class="print-section">
+          <h2>{{ section.title }}</h2>
+          <table class="print-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Checklist Item</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for field in section.fields %}
+                {% set value = field_values.get(field.name, '') %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ field.label }}</td>
+                  <td>
+                    {% if field.type == 'checkbox' %}
+                      {{ 'Yes' if value|lower == 'yes' else 'No' }}
+                    {% else %}
+                      {{ value if value else '-' }}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+      {% endfor %}
+    </article>
+  </section>
+{% endblock %}

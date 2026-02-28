@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <iframe
+    src="{{ target_url }}"
+    class="temperature-frame"
+    title="Temperature"
+    loading="lazy"
+    referrerpolicy="no-referrer"
+  ></iframe>
+{% endblock %}

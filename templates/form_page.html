@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel panel-form">
+    <div class="panel-head form-top-head">
+      <div class="form-top-brand">
+        <img src="{{ url_for('static', filename='images/Logoicon.png') }}" alt="Bhasin Lab" class="form-top-logo" />
+        <div class="form-top-brand-text">
+          <h3>Dr Bhasin's Lab</h3>
+          <span>Trust of quality &amp; service</span>
+        </div>
+      </div>
+      <div class="form-top-copy">
+        <h1 class="panel-title">{{ title }}</h1>
+        <p class="panel-sub">{{ panel_subtitle or 'Fill the checklist and submit.' }}</p>
+        {% if record_meta %}
+          <p class="panel-sub panel-sub-meta">{{ record_meta }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <form method="{{ 'get' if read_only else 'post' }}" class="form-shell">
+      {% for section in sections %}
+        <div class="form-section">
+          <h2>{{ section.title }}</h2>
+          <div class="form-grid">
+            {% for field in section.fields %}
+              {% set field_value = field_values.get(field.name, '') %}
+              <div class="field-card{% if field.type == 'checkbox' %} field-card-check{% endif %}">
+                <label class="field-label">{{ field.label }}</label>
+                {% if field.type == 'checkbox' %}
+                  <label class="check-wrap">
+                    <input
+                      type="checkbox"
+                      name="{{ field.name }}"
+                      value="yes"
+                      {% if read_only and field_value|lower == 'yes' %}checked{% endif %}
+                      {% if read_only %}disabled{% elif field.required %}required{% endif %}
+                    />
+                    <span>Mark done</span>
+                  </label>
+                {% else %}
+                  <input
+                    type="text"
+                    name="{{ field.name }}"
+                    value="{{ field_value }}"
+                    class="field-input"
+                    {% if read_only %}readonly{% elif field.required %}required{% endif %}
+                  />
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if not read_only %}
+        <button type="submit" class="btn btn-primary">Save Checklist</button>
+      {% endif %}
+    </form>
+  </section>
+{% endblock %}

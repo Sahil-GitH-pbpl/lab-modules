@@ -1,0 +1,31 @@
+<header class="topbar">
+  <div class="brand-block">
+    <a href="{{ url_for('main.dashboard') }}" class="brand-link auth-brand header-brand">
+      <img src="{{ url_for('static', filename='images/Logoicon.png') }}" alt="Bhasin Lab" class="auth-logo" />
+      <div class="auth-brand-text">
+        <h2>Dr Bhasin's Lab</h2>
+        <span>Trust of quality &amp; service</span>
+      </div>
+    </a>
+  </div>
+
+  <nav class="main-nav">
+    <a href="{{ url_for('main.dashboard') }}" class="nav-root">Dashboard</a>
+    {% for group in nav_items %}
+      <div class="nav-dropdown">
+        <span class="nav-root">{{ group.label }}</span>
+        <div class="dropdown-menu">
+          {% for item in group.children %}
+            <a href="{{ url_for(item.endpoint) }}" class="dropdown-item">{{ item.label }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+    <a href="{{ url_for('main.temperature') }}" class="nav-root">Temperature</a>
+  </nav>
+
+  <div class="user-block">
+    <a href="{{ url_for('main.logout') }}" class="logout-btn">Logout</a>
+    <span class="user-name">{{ current_user }}</span>
+  </div>
+</header>

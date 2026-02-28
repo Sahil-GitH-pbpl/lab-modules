@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel">
+    <div class="panel-head">
+      <h1 class="panel-title">Lab Dashboard</h1>
+      <p class="panel-sub">Today slot fill status with pending counts.</p>
+    </div>
+
+    <div class="dashboard-summary">
+      {% for machine in machine_summaries %}
+        <div class="dashboard-row">
+          <h2 class="dashboard-row-title">
+            <span class="dashboard-machine-icon" aria-hidden="true">&#9881;</span>
+            <span>{{ machine.title }}</span>
+          </h2>
+
+          <div class="dashboard-slot-list">
+            {% for slot in machine.slots %}
+              {% if slot.state_text == 'Not Fill' %}
+                <a class="dashboard-slot {{ slot.state_class }} is-link" href="{{ slot.fill_url }}">
+                  <span class="dashboard-slot-time">{{ slot.label }}</span>
+                  <span class="dashboard-slot-state">{{ slot.state_text }}</span>
+                </a>
+              {% else %}
+                <div class="dashboard-slot {{ slot.state_class }}">
+                  <span class="dashboard-slot-time">{{ slot.label }}</span>
+                  <span class="dashboard-slot-state">{{ slot.state_text }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="dashboard-counts">
+            <a class="dashboard-count-chip dashboard-count-today" href="{{ machine.today_pending_url }}">
+              <span class="dashboard-count-label">Today Pending</span>
+              <strong class="dashboard-count-value">{{ machine.today_pending }}</strong>
+            </a>
+            <a class="dashboard-count-chip dashboard-count-total" href="{{ machine.total_pending_url }}">
+              <span class="dashboard-count-label">Total Pending</span>
+              <strong class="dashboard-count-value">{{ machine.total_pending }}</strong>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,135 @@
+.auth-card {
+  width: min(420px, 96vw);
+  border: 1px solid #cadfd9;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #ffffff 0%, #f5faf8 100%);
+  box-shadow: 0 26px 42px rgba(18, 57, 62, 0.13);
+  padding: 28px 28px 24px;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.auth-logo {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  border-radius: 20px;
+  border: 1px solid #c9ded8;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(24, 80, 71, 0.11);
+}
+
+.auth-brand-text h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #14575a;
+}
+
+.auth-brand-text span {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #719093;
+}
+
+.auth-title {
+  margin: 16px 0 8px;
+  text-align: center;
+  font-size: 2.05rem;
+  line-height: 1.12;
+  color: #102f34;
+}
+
+.auth-sub {
+  margin: 0 auto 16px;
+  text-align: center;
+  color: #5f767a;
+  max-width: 380px;
+  font-size: 1.03rem;
+}
+
+.auth-form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth-field-label {
+  font-size: 1.13rem;
+  color: #0f2f34;
+}
+
+.auth-input {
+  border-radius: 14px;
+  padding: 13px 14px;
+  font-size: 1.05rem;
+}
+
+.auth-submit {
+  margin-top: 4px;
+  border-radius: 14px;
+  font-size: 1.14rem;
+  padding: 12px 14px;
+}
+
+.auth-suggest-wrap {
+  position: relative;
+}
+
+.auth-suggest-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: #ffffff;
+  border: 1px solid #c8deda;
+  border-radius: 12px;
+  box-shadow: 0 10px 18px rgba(26, 68, 72, 0.13);
+  max-height: 220px;
+  overflow: auto;
+}
+
+.auth-suggest-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  color: #1f4a4f;
+  border-bottom: 1px solid #ecf3f1;
+}
+
+.auth-suggest-item:last-child {
+  border-bottom: 0;
+}
+
+.auth-suggest-item:hover {
+  background: #edf8f5;
+}
+
+.auth-suggest-item.active {
+  background: #e2f4ef;
+}
+
+@media (max-width: 980px) {
+  .topbar {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .main-nav {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .user-block {
+    align-items: flex-start;
+  }
+}
+

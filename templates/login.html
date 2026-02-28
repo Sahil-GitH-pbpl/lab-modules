@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="auth-card">
+    <div class="auth-brand">
+      <img src="{{ url_for('static', filename='images/Logoicon.png') }}" alt="Bhasin Lab" class="auth-logo" />
+      <div class="auth-brand-text">
+        <h2>Dr Bhasin's Lab</h2>
+        <span>Trust of quality & service</span>
+      </div>
+    </div>
+    <h1 class="auth-title">Lab Modules Panel</h1>
+    <p class="auth-sub">Sign in to fill forms and verify records quickly.</p>
+
+    <form method="post" class="auth-form">
+      <label class="field-label auth-field-label">Username</label>
+      <div class="auth-suggest-wrap">
+        <input
+          id="usernameInput"
+          name="username"
+          type="text"
+          required
+          autocomplete="off"
+          class="field-input auth-input"
+          placeholder="Enter username"
+        />
+        <div id="usernameSuggestions" class="auth-suggest-list" hidden></div>
+      </div>
+
+      <label class="field-label auth-field-label">Password</label>
+      <input name="password" type="password" required class="field-input auth-input" placeholder="Enter DOB (ddmmyyyy)" />
+
+      <button type="submit" class="btn btn-primary w-full auth-submit">Sign In</button>
+    </form>
+  </section>
+{% endblock %}
