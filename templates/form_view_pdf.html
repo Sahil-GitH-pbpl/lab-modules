@@ -3,6 +3,7 @@
 {% block content %}
   <section class="panel print-doc-shell">
     <div class="print-toolbar">
+      <a href="{{ back_url or request.referrer or url_for('main.dashboard') }}" class="btn btn-back">Back</a>
       <button type="button" class="btn btn-primary" onclick="window.print()">Print / Save PDF</button>
     </div>
 

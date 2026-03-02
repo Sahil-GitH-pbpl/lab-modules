@@ -75,6 +75,36 @@ def pending_counts(table: str, datetime_col: str) -> tuple[int, int]:
     return int(today_row.get("cnt") or 0), int(total_row.get("cnt") or 0)
 
 
+def today_slot_fill_state_simple(table: str, datetime_col: str) -> tuple[str, str]:
+    try:
+        row = fetch_one(
+            f"SELECT 1 AS found FROM {table} "
+            f"WHERE DATE({datetime_col})=CURDATE() "
+            f"ORDER BY {datetime_col} DESC LIMIT 1"
+        )
+    except Exception:
+        return "Not Fill", "slot-notfill"
+    if not row:
+        return "Not Fill", "slot-notfill"
+    return "Filled", "slot-filled"
+
+
+def pending_counts_simple(table: str, datetime_col: str) -> tuple[int, int]:
+    try:
+        today_row = fetch_one(
+            f"SELECT COUNT(*) AS cnt FROM {table} "
+            f"WHERE DATE({datetime_col})=CURDATE() "
+            "AND COALESCE(status, '0') <> '1'"
+        ) or {}
+        total_row = fetch_one(
+            f"SELECT COUNT(*) AS cnt FROM {table} "
+            "WHERE COALESCE(status, '0') <> '1'"
+        ) or {}
+    except Exception:
+        return 0, 0
+    return int(today_row.get("cnt") or 0), int(total_row.get("cnt") or 0)
+
+
 def group_fields(fields: list[dict[str, Any]]) -> list[dict[str, Any]]:
     grouped: dict[str, list[dict[str, Any]]] = {}
     for field in fields:
@@ -103,6 +133,10 @@ def insert_form_record(form_key: str, form_data: dict[str, Any]) -> None:
         columns.append(user_col)
         params.append(session.get("empname", ""))
 
+    for col_name, col_value in config.get("fixed_columns", {}).items():
+        columns.append(col_name)
+        params.append(col_value)
+
     if config.get("timerec"):
         columns.append("timerec")
         params.append(config["timerec"])
@@ -123,6 +157,8 @@ def collect_request_values(config: dict[str, Any]) -> dict[str, str]:
         key = field["name"]
         if field["type"] == "checkbox":
             data[key] = "yes" if request.form.get(key) else ""
+        elif field["type"] == "number":
+            data[key] = digits_only(request.form.get(key, "").strip())
         else:
             data[key] = request.form.get(key, "").strip()
     return data
@@ -172,6 +208,7 @@ def render_read_only_form(form_key: str, fallback_endpoint: str):
         verified_by=verified_by,
         filled_at=filled_at,
         time_label=time_label,
+        back_url=url_for(fallback_endpoint),
     )
 
 
@@ -296,4 +333,5 @@ def render_cobas_detail(form_key: str, timerec: str, title: str):
         datetime_value=as_datetime_label(row.get("datetime")),
         fields=fields,
         can_verify=str(row.get("status", "0")) != "1",
+        back_url=url_for("main.cobaspureall"),
     )

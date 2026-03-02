@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request
+from flask import flash, redirect, render_template, request, session
 
 from ..forms_config import FORM_CONFIGS
 from .blueprint import bp, login_required
@@ -14,13 +14,29 @@ def render_form(form_key: str):
         flash("Form submitted successfully.", "success")
         return redirect(request.path)
 
+    record_meta = ""
+    if config.get("username_column") == "documentedby":
+        record_meta = f"Documented By: {session.get('empname', '')} | Approved By: Pending"
+
     return render_template(
         "form_page.html",
         title=config["title"],
         sections=group_fields(config["fields"]),
         read_only=False,
         field_values={},
-        panel_subtitle="Fill the checklist and submit.",
+        panel_subtitle=config.get("panel_subtitle", "Fill the checklist and submit."),
+        record_meta=record_meta,
+    )
+
+
+def render_lifotronic_placeholder(title: str):
+    return render_template(
+        "form_page.html",
+        title=title,
+        sections=[],
+        read_only=True,
+        field_values={},
+        panel_subtitle="Form layout will be configured here.",
         record_meta="",
     )
 
@@ -77,3 +93,27 @@ def attalica12am():
 @login_required
 def aclelite():
     return render_form("aclelite")
+
+
+@bp.route("/lifotronic-daily-form", methods=["GET", "POST"])
+@login_required
+def lifotronic_daily_form():
+    return render_form("lifotronic_daily")
+
+
+@bp.route("/lifotronic-weekly-form", methods=["GET", "POST"])
+@login_required
+def lifotronic_weekly_form():
+    return render_form("lifotronic_weekly")
+
+
+@bp.route("/laurav2-daily-form", methods=["GET", "POST"])
+@login_required
+def laurav2_daily_form():
+    return render_form("laurav2_daily")
+
+
+@bp.route("/laurav2-weekly-form", methods=["GET", "POST"])
+@login_required
+def laurav2_weekly_form():
+    return render_form("laurav2_weekly")

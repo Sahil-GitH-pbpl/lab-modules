@@ -6,6 +6,10 @@ def text(name: str, label: str, section: str = "Checklist"):
     return {"name": name, "label": label, "type": "text", "required": True, "section": section}
 
 
+def number(name: str, label: str, section: str = "Checklist"):
+    return {"name": name, "label": label, "type": "number", "required": True, "section": section}
+
+
 FORM_CONFIGS = {
     "mindray8am": {
         "title": "Mindray BC 780 - 8AM",
@@ -353,6 +357,106 @@ FORM_CONFIGS = {
             checkbox("seven", "8. APTT Reagent", "Inventory"),
         ],
     },
+    "lifotronic_daily": {
+        "title": "DAILY MAINTENANCE LOGSHEET - LIFOTRONIC H100",
+        "table": "lifotronic_h100_daily",
+        "timerec": None,
+        "datetime_column": "datetime",
+        "username_column": "documentedby",
+        "submitform": None,
+        "fixed_columns": {
+            "approvedby": "Pending",
+        },
+        "column_map": {
+            "reagent_volume_check": "reagent_volume_check",
+            "check_rt": "check_rt",
+            "column_count": "column_count",
+            "filter_count": "filter_count",
+            "adc_check": "adc_check",
+            "pressure_check": "pressure_check",
+        },
+        "fields": [
+            checkbox("reagent_volume_check", "Reagent Volume Check", "Checklist"),
+            checkbox("check_rt", "Check RT", "Checklist"),
+            number("column_count", "Column Count", "Checklist"),
+            number("filter_count", "Filter Count", "Checklist"),
+            checkbox("adc_check", "ADC Check", "Checklist"),
+            checkbox("pressure_check", "Pressure Check", "Checklist"),
+        ],
+    },
+    "lifotronic_weekly": {
+        "title": "WEEKLY MAINTENANCE LOGSHEET - LIFOTRONIC H100",
+        "table": "lifotronic_h100_weekly",
+        "timerec": None,
+        "datetime_column": "datetime",
+        "username_column": "documentedby",
+        "submitform": None,
+        "fixed_columns": {
+            "approvedby": "Pending",
+        },
+        "column_map": {
+            "hp_pump_cleaning": "hp_pump_cleaning",
+            "diluting_tank_cleaning": "diluting_tank_cleaning",
+            "probe_inner_well": "probe_inner_well",
+            "probe_outer_well": "probe_outer_well",
+            "clean_system": "clean_system",
+            "clean_sample_rack": "clean_sample_rack",
+            "clean_sample_holder": "clean_sample_holder",
+        },
+        "fields": [
+            checkbox("hp_pump_cleaning", "HP Pump Cleaning", "Checklist"),
+            checkbox("diluting_tank_cleaning", "Diluting Tank Cleaning", "Checklist"),
+            checkbox("probe_inner_well", "Probe Inner Well", "Checklist"),
+            checkbox("probe_outer_well", "Probe Outer Well", "Checklist"),
+            checkbox("clean_system", "Clean System", "Checklist"),
+            checkbox("clean_sample_rack", "Clean Sample Rack", "Checklist"),
+            checkbox("clean_sample_holder", "Clean Sample Holder", "Checklist"),
+        ],
+    },
+    "laurav2_daily": {
+        "title": "LAURA V2 - Daily Maintenance",
+        "panel_subtitle": "Equipment: LAURA V2",
+        "table": "laurav2_daily",
+        "timerec": None,
+        "datetime_column": "datetime",
+        "username_column": "documentedby",
+        "submitform": None,
+        "fixed_columns": {
+            "approvedby": "Pending",
+        },
+        "column_map": {
+            "cleaning_of_sensor": "cleaning_of_sensor",
+            "disposal_of_waste_strips": "disposal_of_waste_strips",
+            "wiping_of_screen": "wiping_of_screen",
+            "cleaning_of_belt": "cleaning_of_belt",
+        },
+        "fields": [
+            checkbox("cleaning_of_sensor", "Cleaning of sensor", "Daily Maintenance"),
+            checkbox("disposal_of_waste_strips", "Disposal of waste strips", "Daily Maintenance"),
+            checkbox("wiping_of_screen", "Wiping of the screen", "Daily Maintenance"),
+            checkbox("cleaning_of_belt", "Cleaning of belt", "Daily Maintenance"),
+        ],
+    },
+    "laurav2_weekly": {
+        "title": "LAURA V2 - Weekly Maintenance",
+        "panel_subtitle": "Equipment: LAURA V2",
+        "table": "laurav2_weekly",
+        "timerec": None,
+        "datetime_column": "datetime",
+        "username_column": "documentedby",
+        "submitform": None,
+        "fixed_columns": {
+            "approvedby": "Pending",
+        },
+        "column_map": {
+            "waste_bin_cleaning": "waste_bin_cleaning",
+            "equipment_cleaning": "equipment_cleaning",
+        },
+        "fields": [
+            checkbox("waste_bin_cleaning", "Waste bin Cleaning", "Weekly Maintenance"),
+            checkbox("equipment_cleaning", "Equipment Cleaning", "Weekly Maintenance"),
+        ],
+    },
 }
 
 # Reuse Attalica mapping and fields for all Attalica time variants.
@@ -394,6 +498,22 @@ NAV_ITEMS = [
         "children": [
             {"label": "8AM Form", "endpoint": "main.aclelite"},
             {"label": "Verification", "endpoint": "main.aclelitemaint"},
+        ],
+    },
+    {
+        "label": "LIFOTRONIC H100",
+        "children": [
+            {"label": "Daily Form", "endpoint": "main.lifotronic_daily_form"},
+            {"label": "Weekly Form", "endpoint": "main.lifotronic_weekly_form"},
+            {"label": "Verification", "endpoint": "main.lifotronicverification"},
+        ],
+    },
+    {
+        "label": "LAURA V2",
+        "children": [
+            {"label": "Daily Form", "endpoint": "main.laurav2_daily_form"},
+            {"label": "Weekly Form", "endpoint": "main.laurav2_weekly_form"},
+            {"label": "Verification", "endpoint": "main.laurav2_verification"},
         ],
     },
 ]

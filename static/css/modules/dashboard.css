@@ -38,6 +38,16 @@
   border-color: #8fb5e0;
 }
 
+.dashboard-row:nth-child(5) {
+  background: linear-gradient(180deg, #d7f0ee 0%, #b9dfda 100%);
+  border-color: #83b8b1;
+}
+
+.dashboard-row:nth-child(6) {
+  background: linear-gradient(180deg, #f0e8d9 0%, #e4d4b7 100%);
+  border-color: #bea983;
+}
+
 .dashboard-row-title {
   margin: 0;
   display: inline-flex;

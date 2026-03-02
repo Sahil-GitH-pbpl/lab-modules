@@ -1,5 +1,8 @@
-from flask import render_template, url_for
+from datetime import datetime
 
+from flask import render_template, request, url_for
+
+from ..db import fetch_all
 from ..forms_config import TIME_LABELS
 from .blueprint import bp, login_required
 from .helpers import as_date_label, as_datetime_label, filtered_rows, status_meta
@@ -220,5 +223,309 @@ def aclelitemaint():
         date2=date2,
         timerec=timerec,
         show_time_filter=False,
+        pagination=pagination,
+    )
+
+
+@bp.route("/lifotronicverification", methods=["GET", "POST"])
+@login_required
+def lifotronicverification():
+    date1 = (request.values.get("date1") or "").strip()
+    date2 = (request.values.get("date2") or "").strip()
+    timerec = (request.values.get("timerec") or "").strip().lower()
+    page_raw = (request.values.get("page") or "").strip().lower()
+    is_all = page_raw == "all"
+    page = 1
+    if not is_all:
+        try:
+            page = int(page_raw) if page_raw else 1
+        except ValueError:
+            page = 1
+        if page < 1:
+            page = 1
+    per_page = 20
+
+    where = []
+    params: list[str] = []
+    if date1 and date2:
+        where.append("DATE(created_at) BETWEEN %s AND %s")
+        params.extend([date1, date2])
+
+    where_sql = ""
+    if where:
+        where_sql = " WHERE " + " AND ".join(where)
+
+    records = []
+    if timerec in ("", "daily"):
+        daily_rows = fetch_all(
+            f"SELECT id, created_at, status FROM lifotronic_h100_daily{where_sql}",
+            tuple(params),
+        )
+        for row in daily_rows:
+            records.append(
+                {
+                    "id": row.get("id"),
+                    "created_at": row.get("created_at"),
+                    "status": row.get("status", "0"),
+                    "form_type": "daily",
+                }
+            )
+
+    if timerec in ("", "weekly"):
+        weekly_rows = fetch_all(
+            f"SELECT id, created_at, status FROM lifotronic_h100_weekly{where_sql}",
+            tuple(params),
+        )
+        for row in weekly_rows:
+            records.append(
+                {
+                    "id": row.get("id"),
+                    "created_at": row.get("created_at"),
+                    "status": row.get("status", "0"),
+                    "form_type": "weekly",
+                }
+            )
+
+    def sort_key(item: dict):
+        value = item.get("created_at")
+        if isinstance(value, datetime):
+            return value
+        raw = str(value or "").strip()
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %I:%M %p", "%Y-%m-%d"):
+            try:
+                return datetime.strptime(raw, fmt)
+            except ValueError:
+                continue
+        return datetime.min
+
+    records.sort(key=sort_key, reverse=True)
+    total_records = len(records)
+
+    if is_all:
+        per_page = total_records if total_records > 0 else 1
+        total_pages = 1
+        page = 1
+    else:
+        total_pages = max((total_records + per_page - 1) // per_page, 1)
+        if page > total_pages:
+            page = total_pages
+
+    offset = (page - 1) * per_page
+    page_rows = records[offset : offset + per_page]
+    if total_records:
+        start_index = offset + 1
+        end_index = min(offset + len(page_rows), total_records)
+    else:
+        start_index = 0
+        end_index = 0
+
+    page_window_start = max(1, page - 2)
+    page_window_end = min(total_pages, page + 2)
+    pagination = {
+        "page": page,
+        "per_page": per_page,
+        "total_records": total_records,
+        "total_pages": total_pages,
+        "has_prev": page > 1,
+        "has_next": (page < total_pages) and (not is_all),
+        "prev_page": page - 1,
+        "next_page": page + 1,
+        "pages": list(range(page_window_start, page_window_end + 1)) if not is_all else [1],
+        "start_index": start_index,
+        "end_index": end_index,
+        "is_all": is_all,
+    }
+
+    items = []
+    row_start = start_index if start_index else 1
+    for idx, row in enumerate(page_rows, start=row_start):
+        status_text, status_class = status_meta(row.get("status", "0"))
+        is_weekly = row.get("form_type") == "weekly"
+        status_url = url_for(
+            "main.lifotronicweeklymainform" if is_weekly else "main.lifotronicmainform",
+            id=row["id"],
+        )
+        view_url = url_for(
+            "main.view_lifotronic_weekly" if is_weekly else "main.view_lifotronic_daily",
+            id=row["id"],
+        )
+        items.append(
+            {
+                "id": row["id"],
+                "sr": idx,
+                "date": as_date_label(row.get("created_at")),
+                "datetime": as_datetime_label(row.get("created_at")),
+                "time": "Weekly" if is_weekly else "Daily",
+                "status_text": status_text,
+                "status_class": status_class,
+                "status_url": status_url,
+                "view_url": view_url,
+            }
+        )
+
+    return render_template(
+        "list_page.html",
+        title="LIFOTRONIC H100 Verification",
+        items=items,
+        date1=date1,
+        date2=date2,
+        timerec=timerec,
+        show_time_filter=True,
+        time_options=[
+            ("daily", "Daily Form"),
+            ("weekly", "Weekly Form"),
+        ],
+        pagination=pagination,
+    )
+
+
+@bp.route("/laurav2verification", methods=["GET"])
+@login_required
+def laurav2_verification():
+    date1 = (request.values.get("date1") or "").strip()
+    date2 = (request.values.get("date2") or "").strip()
+    timerec = (request.values.get("timerec") or "").strip().lower()
+    page_raw = (request.values.get("page") or "").strip().lower()
+    is_all = page_raw == "all"
+    page = 1
+    if not is_all:
+        try:
+            page = int(page_raw) if page_raw else 1
+        except ValueError:
+            page = 1
+        if page < 1:
+            page = 1
+    per_page = 20
+
+    where = []
+    params: list[str] = []
+    if date1 and date2:
+        where.append("DATE(created_at) BETWEEN %s AND %s")
+        params.extend([date1, date2])
+
+    where_sql = ""
+    if where:
+        where_sql = " WHERE " + " AND ".join(where)
+
+    records = []
+    if timerec in ("", "daily"):
+        daily_rows = fetch_all(
+            f"SELECT id, created_at, status FROM laurav2_daily{where_sql}",
+            tuple(params),
+        )
+        for row in daily_rows:
+            records.append(
+                {
+                    "id": row.get("id"),
+                    "created_at": row.get("created_at"),
+                    "status": row.get("status", "0"),
+                    "form_type": "daily",
+                }
+            )
+
+    if timerec in ("", "weekly"):
+        weekly_rows = fetch_all(
+            f"SELECT id, created_at, status FROM laurav2_weekly{where_sql}",
+            tuple(params),
+        )
+        for row in weekly_rows:
+            records.append(
+                {
+                    "id": row.get("id"),
+                    "created_at": row.get("created_at"),
+                    "status": row.get("status", "0"),
+                    "form_type": "weekly",
+                }
+            )
+
+    def sort_key(item: dict):
+        value = item.get("created_at")
+        if isinstance(value, datetime):
+            return value
+        raw = str(value or "").strip()
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %I:%M %p", "%Y-%m-%d"):
+            try:
+                return datetime.strptime(raw, fmt)
+            except ValueError:
+                continue
+        return datetime.min
+
+    records.sort(key=sort_key, reverse=True)
+    total_records = len(records)
+
+    if is_all:
+        per_page = total_records if total_records > 0 else 1
+        total_pages = 1
+        page = 1
+    else:
+        total_pages = max((total_records + per_page - 1) // per_page, 1)
+        if page > total_pages:
+            page = total_pages
+
+    offset = (page - 1) * per_page
+    page_rows = records[offset : offset + per_page]
+    if total_records:
+        start_index = offset + 1
+        end_index = min(offset + len(page_rows), total_records)
+    else:
+        start_index = 0
+        end_index = 0
+
+    page_window_start = max(1, page - 2)
+    page_window_end = min(total_pages, page + 2)
+    pagination = {
+        "page": page,
+        "per_page": per_page,
+        "total_records": total_records,
+        "total_pages": total_pages,
+        "has_prev": page > 1,
+        "has_next": (page < total_pages) and (not is_all),
+        "prev_page": page - 1,
+        "next_page": page + 1,
+        "pages": list(range(page_window_start, page_window_end + 1)) if not is_all else [1],
+        "start_index": start_index,
+        "end_index": end_index,
+        "is_all": is_all,
+    }
+
+    items = []
+    row_start = start_index if start_index else 1
+    for idx, row in enumerate(page_rows, start=row_start):
+        status_text, status_class = status_meta(row.get("status", "0"))
+        is_weekly = row.get("form_type") == "weekly"
+        status_url = url_for(
+            "main.laurav2weeklymainform" if is_weekly else "main.laurav2dailymainform",
+            id=row["id"],
+        )
+        view_url = url_for(
+            "main.view_laurav2_weekly" if is_weekly else "main.view_laurav2_daily",
+            id=row["id"],
+        )
+        items.append(
+            {
+                "id": row["id"],
+                "sr": idx,
+                "date": as_date_label(row.get("created_at")),
+                "datetime": as_datetime_label(row.get("created_at")),
+                "time": "Weekly" if is_weekly else "Daily",
+                "status_text": status_text,
+                "status_class": status_class,
+                "status_url": status_url,
+                "view_url": view_url,
+            }
+        )
+
+    return render_template(
+        "list_page.html",
+        title="LAURA V2 Verification",
+        items=items,
+        date1=date1,
+        date2=date2,
+        timerec=timerec,
+        show_time_filter=True,
+        time_options=[
+            ("daily", "Daily Form"),
+            ("weekly", "Weekly Form"),
+        ],
         pagination=pagination,
     )

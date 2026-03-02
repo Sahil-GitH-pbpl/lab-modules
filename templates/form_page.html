@@ -40,11 +40,16 @@
                     <span>Mark done</span>
                   </label>
                 {% else %}
+                  {% set input_type = 'text' %}
+                  {% if field.type == 'number' %}
+                    {% set input_type = 'number' %}
+                  {% endif %}
                   <input
-                    type="text"
+                    type="{{ input_type }}"
                     name="{{ field.name }}"
                     value="{{ field_value }}"
                     class="field-input"
+                    {% if field.type == 'number' %}min="0" step="1"{% endif %}
                     {% if read_only %}readonly{% elif field.required %}required{% endif %}
                   />
                 {% endif %}

@@ -182,6 +182,62 @@ a {
   font-weight: 600;
 }
 
+.temp-fab {
+  position: fixed;
+  right: 18px;
+  bottom: 26px;
+  width: 74px;
+  height: 74px;
+  border-radius: 16px;
+  border: 1px solid #b8d3cd;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 12px 20px -10px rgba(10, 35, 39, 0.5),
+    0 4px 8px -6px rgba(10, 35, 39, 0.35);
+  z-index: 70;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.temp-fab:hover {
+  background: #e9f6f3;
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 24px -11px rgba(10, 35, 39, 0.55),
+    0 5px 9px -6px rgba(10, 35, 39, 0.38);
+}
+
+.temp-fab-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.temp-fab::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(20, 41, 44, 0.94);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: opacity 0.16s ease;
+}
+
+.temp-fab:hover::after {
+  opacity: 1;
+}
+
 .flash-wrap {
   display: grid;
   gap: 10px;
@@ -219,6 +275,18 @@ a {
 
 .panel-head {
   margin-bottom: 14px;
+}
+
+.panel-head-with-back {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panel-head-copy {
+  flex: 1;
+  min-width: 0;
 }
 
 .panel-title {
@@ -496,6 +564,16 @@ a {
 .btn-warning {
   background: linear-gradient(135deg, #d97706, var(--accent));
   color: #fff;
+}
+
+.btn-back {
+  background: #e7f3f1;
+  color: #114247;
+  border: 1px solid #b8d3cd;
+}
+
+.btn-back:hover {
+  background: #daece8;
 }
 
 .w-full {
