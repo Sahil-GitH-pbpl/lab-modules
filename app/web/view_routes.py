@@ -17,6 +17,45 @@ def view_mindray4pm():
     return render_read_only_form("mindray4pm", "main.mindrayverification")
 
 
+@bp.route("/view/mindraybc7008am")
+@login_required
+def view_mindraybc7008am():
+    return render_read_only_form("mindraybc7008am", "main.mindraybc700verification")
+
+
+@bp.route("/mindraybc700mainform", methods=["GET", "POST"])
+@login_required
+def mindraybc700mainform():
+    record_id = request.values.get("id", type=int)
+    if not record_id:
+        flash("Missing record id", "error")
+        return redirect(url_for("main.mindraybc700verification"))
+
+    if request.method == "POST":
+        execute(
+            "UPDATE mindraybc700 SET status='1', verifiedby=%s, variftime=%s WHERE id=%s",
+            (session.get("empname", ""), now_str(), record_id),
+        )
+        flash("Record verified successfully.", "success")
+        return redirect(url_for("main.mindraybc700verification"))
+
+    row = fetch_one("SELECT * FROM mindraybc700 WHERE id=%s LIMIT 1", (record_id,))
+    if not row:
+        flash("Record not found", "error")
+        return redirect(url_for("main.mindraybc700verification"))
+
+    fields = detail_rows_from_config("mindraybc7008am", row)
+    return render_template(
+        "detail_page.html",
+        title="Mindray BC 700 Detail",
+        time_label="8 AM",
+        datetime_value=as_datetime_label(row.get("datetime")),
+        fields=fields,
+        can_verify=str(row.get("status", "0")) != "1",
+        back_url=url_for("main.mindraybc700verification"),
+    )
+
+
 @bp.route("/view/cobaspure8am")
 @login_required
 def view_cobaspure8am():

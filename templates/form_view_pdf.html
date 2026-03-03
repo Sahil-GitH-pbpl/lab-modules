@@ -43,9 +43,16 @@
             <tbody>
               {% for field in section.fields %}
                 {% set value = field_values.get(field.name, '') %}
+                {% set clean_label = field.label %}
+                {% if '. ' in clean_label %}
+                  {% set parts = clean_label.split('. ', 1) %}
+                  {% if parts[0].isdigit() %}
+                    {% set clean_label = parts[1] %}
+                  {% endif %}
+                {% endif %}
                 <tr>
                   <td>{{ loop.index }}</td>
-                  <td>{{ field.label }}</td>
+                  <td>{{ clean_label }}</td>
                   <td>
                     {% if field.type == 'checkbox' %}
                       {{ 'Yes' if value|lower == 'yes' else 'No' }}

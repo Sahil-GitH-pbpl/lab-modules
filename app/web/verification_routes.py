@@ -62,6 +62,58 @@ def mindrayverification():
     )
 
 
+@bp.route("/mindraybc700verification", methods=["GET"])
+@login_required
+def mindraybc700verification():
+    rows, date1, date2, timerec, pagination = filtered_rows("mindraybc700", "datetime", allow_time=True)
+    view_endpoint_by_time = {
+        "eightam": "main.view_mindraybc7008am",
+    }
+
+    items = []
+    row_start = pagination["start_index"] if pagination["start_index"] else 1
+    for idx, row in enumerate(rows, start=row_start):
+        status_text, status_class = status_meta(row.get("status", "0"))
+        record_time = str(row.get("timerec", ""))
+        view_endpoint = view_endpoint_by_time.get(record_time)
+        view_url = url_for(view_endpoint, id=row["id"]) if view_endpoint else ""
+        status_url = url_for("main.mindraybc700mainform", id=row["id"])
+
+        if str(row.get("formfill", "0")) == "1":
+            status_text = "Not Fill"
+            status_class = "status-muted"
+            status_url = ""
+            view_url = ""
+
+        items.append(
+            {
+                "id": row["id"],
+                "sr": idx,
+                "date": as_date_label(row.get("datetime")),
+                "datetime": as_datetime_label(row.get("datetime")),
+                "time": TIME_LABELS.get(record_time, record_time),
+                "status_text": status_text,
+                "status_class": status_class,
+                "status_url": status_url,
+                "view_url": view_url,
+            }
+        )
+
+    return render_template(
+        "list_page.html",
+        title="Mindray BC 700 Verification",
+        items=items,
+        date1=date1,
+        date2=date2,
+        timerec=timerec,
+        show_time_filter=True,
+        time_options=[
+            ("eightam", "8 AM"),
+        ],
+        pagination=pagination,
+    )
+
+
 @bp.route("/cobaspureall", methods=["GET", "POST"])
 @login_required
 def cobaspureall():

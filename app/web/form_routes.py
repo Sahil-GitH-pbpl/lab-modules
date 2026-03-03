@@ -53,6 +53,12 @@ def mindray4pm():
     return render_form("mindray4pm")
 
 
+@bp.route("/mindraybc7008am", methods=["GET", "POST"])
+@login_required
+def mindraybc7008am():
+    return render_form("mindraybc7008am")
+
+
 @bp.route("/cobaspure8am", methods=["GET", "POST"])
 @login_required
 def cobaspure8am():
@@ -113,7 +119,8 @@ def laurav2_daily_form():
     return render_form("laurav2_daily")
 
 
-@bp.route("/laurav2-weekly-form", methods=["GET", "POST"])
-@login_required
-def laurav2_weekly_form():
-    return render_form("laurav2_weekly")
+# @bp.route("/laurav2-weekly-form", methods=["GET", "POST"])
+# @login_required
+# def laurav2_weekly_form():
+#     return render_form("laurav2_weekly")
+

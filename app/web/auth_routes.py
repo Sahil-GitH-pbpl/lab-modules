@@ -7,9 +7,7 @@ from .helpers import digits_only
 
 @bp.route("/")
 def root():
-    if session.get("userid"):
-        return redirect(url_for("main.dashboard"))
-    return redirect(url_for("main.login"))
+    return redirect(url_for("main.dashboard"))
 
 
 @bp.route("/login", methods=["GET", "POST"])

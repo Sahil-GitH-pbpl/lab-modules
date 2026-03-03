@@ -41,6 +41,34 @@ FORM_CONFIGS = {
             checkbox("nine", "9. Machine Cleaning & Dusting"),
         ],
     },
+    "mindraybc7008am": {
+        "title": "Mindray BC 700 - 8AM",
+        "table": "mindraybc700",
+        "timerec": "eightam",
+        "datetime_column": "datetime",
+        "username_column": "username",
+        "submitform": 1,
+        "column_map": {
+            "one": "one",
+            "two": "two",
+            "three": "three",
+            "four": "four",
+            "five": "five",
+            "six": "six",
+            "seven": "seven",
+            "nine": "nine",
+        },
+        "fields": [
+            checkbox("one", "1. Check & Empty Liquid Waste"),
+            text("two", "2. % Quantity of DS Diluent"),
+            text("three", "3. % Quantity of M-6LH LYSE"),
+            text("four", "4. % Quantity of M-6LD LYSE"),
+            text("five", "5. % Quantity of M-6FD DYE"),
+            text("six", "6. % Quantity of ESR SOLUTION"),
+            text("seven", "7. % Quantity of Probe Cleanser"),
+            checkbox("nine", "9. Machine Cleaning & Dusting"),
+        ],
+    },
     "mindray4pm": {
         "title": "Mindray BC 780 - 4PM",
         "table": "mindraybc",
@@ -476,6 +504,13 @@ NAV_ITEMS = [
         ],
     },
     {
+        "label": "Mindray BC 700",
+        "children": [
+            {"label": "8AM Form", "endpoint": "main.mindraybc7008am"},
+            {"label": "Verification", "endpoint": "main.mindraybc700verification"},
+        ],
+    },
+    {
         "label": "Cobas Pure",
         "children": [
             {"label": "8AM Form", "endpoint": "main.cobaspure8am"},
@@ -503,7 +538,7 @@ NAV_ITEMS = [
     {
         "label": "LIFOTRONIC H100",
         "children": [
-            {"label": "Daily Form", "endpoint": "main.lifotronic_daily_form"},
+            {"label": "9 AM", "endpoint": "main.lifotronic_daily_form"},
             {"label": "Weekly Form", "endpoint": "main.lifotronic_weekly_form"},
             {"label": "Verification", "endpoint": "main.lifotronicverification"},
         ],
@@ -511,8 +546,8 @@ NAV_ITEMS = [
     {
         "label": "LAURA V2",
         "children": [
-            {"label": "Daily Form", "endpoint": "main.laurav2_daily_form"},
-            {"label": "Weekly Form", "endpoint": "main.laurav2_weekly_form"},
+            {"label": "9 AM", "endpoint": "main.laurav2_daily_form"},
+            # {"label": "Weekly Form", "endpoint": "main.laurav2_weekly_form"},  # disabled for now
             {"label": "Verification", "endpoint": "main.laurav2_verification"},
         ],
     },
@@ -524,5 +559,7 @@ TIME_LABELS = {
     "fourpm": "4 PM",
     "sevenpm": "7 PM",
     "onethirtyam": "1:30 AM",
+    "twelveam": "12AM",
     "twelvethirtyam": "12:30 AM",
 }
+

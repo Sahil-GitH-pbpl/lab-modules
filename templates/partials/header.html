@@ -10,7 +10,6 @@
   </div>
 
   <nav class="main-nav">
-    <a href="{{ url_for('main.dashboard') }}" class="nav-root">Dashboard</a>
     {% for group in nav_items %}
       <div class="nav-dropdown">
         <span class="nav-root">{{ group.label }}</span>

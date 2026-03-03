@@ -27,6 +27,15 @@ def dashboard():
             ],
         },
         {
+            "title": "Mindray BC 700 Machine",
+            "table": "mindraybc700",
+            "datetime_col": "datetime",
+            "verify_endpoint": "main.mindraybc700verification",
+            "slots": [
+                ("eightam", "8 AM", "main.mindraybc7008am"),
+            ],
+        },
+        {
             "title": "Cobas Pure Machine",
             "table": "cobaspure",
             "datetime_col": "datetime",
@@ -118,7 +127,7 @@ def dashboard():
 
     laura_slots = [
         ("Daily", "main.laurav2_daily_form", "laurav2_daily", "created_at"),
-        ("Weekly", "main.laurav2_weekly_form", "laurav2_weekly", "created_at"),
+        # ("Weekly", "main.laurav2_weekly_form", "laurav2_weekly", "created_at"),  # disabled for now
     ]
     laura_slot_items = []
     for label, fill_endpoint, table, datetime_col in laura_slots:
@@ -132,13 +141,13 @@ def dashboard():
             }
         )
     a_today_1, a_total_1 = pending_counts_simple("laurav2_daily", "created_at")
-    a_today_2, a_total_2 = pending_counts_simple("laurav2_weekly", "created_at")
+    # a_today_2, a_total_2 = pending_counts_simple("laurav2_weekly", "created_at")  # disabled for now
     summaries.append(
         {
             "title": "LAURA V2",
             "slots": laura_slot_items,
-            "today_pending": a_today_1 + a_today_2,
-            "total_pending": a_total_1 + a_total_2,
+            "today_pending": a_today_1,
+            "total_pending": a_total_1,
             "today_pending_url": url_for("main.laurav2_verification", date1=today_iso, date2=today_iso),
             "total_pending_url": url_for("main.laurav2_verification"),
         }
