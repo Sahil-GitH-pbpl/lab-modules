@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import re
 from typing import Any
 
 from flask import flash, redirect, render_template, request, session, url_for
@@ -113,6 +114,11 @@ def group_fields(fields: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [{"title": k, "fields": v} for k, v in grouped.items()]
 
 
+def strip_leading_index(label: str) -> str:
+    # Convert labels like "1. Check ..." to "Check ..." for numbered-table views.
+    return re.sub(r"^\s*\d+\.\s*", "", str(label or "")).strip()
+
+
 def insert_form_record(form_key: str, form_data: dict[str, Any]) -> None:
     config = FORM_CONFIGS[form_key]
 
@@ -199,10 +205,15 @@ def render_read_only_form(form_key: str, fallback_endpoint: str):
     filled_at = as_datetime_label(row.get(datetime_col, "")) if datetime_col else ""
     time_label = TIME_LABELS.get(config["timerec"], config["timerec"]) if config.get("timerec") else ""
 
+    sections = group_fields(config["fields"])
+    for section in sections:
+        for field in section["fields"]:
+            field["display_label"] = strip_leading_index(field.get("label", ""))
+
     return render_template(
         "form_view_pdf.html",
         title=config["title"],
-        sections=group_fields(config["fields"]),
+        sections=sections,
         field_values=field_values_from_row(form_key, row),
         filled_by=filled_by,
         verified_by=verified_by,

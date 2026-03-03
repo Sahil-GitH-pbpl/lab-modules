@@ -17,7 +17,7 @@ py labmod.py
 3. Open browser:
 
 ```text
-http://127.0.0.1:5000
+http://127.0.0.1:5006
 ```
 
 ## Database
@@ -36,4 +36,9 @@ You can override via environment variables:
 - `LABMOD_DB_USER`
 - `LABMOD_DB_PASSWORD`
 - `LABMOD_DB_NAME`
+- `LABMOD_AUTH_DB_HOST`
+- `LABMOD_AUTH_DB_PORT`
+- `LABMOD_AUTH_DB_USER`
+- `LABMOD_AUTH_DB_PASSWORD`
+- `LABMOD_AUTH_DB_NAME`
 - `LABMOD_SECRET`
