@@ -12,7 +12,7 @@ def _connect(host: str, user: str, password: str, database: str, port: int):
         database=database,
         port=port,
         charset="utf8mb4",
-        init_command="SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+        init_command="SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci",
         cursorclass=pymysql.cursors.DictCursor,
         autocommit=False,
     )
