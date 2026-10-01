@@ -24,9 +24,10 @@ EQUIPMENT_TABLES: dict[str, list[str]] = {
         "light_check_alternate_day",
         "background_check_daily",
         "clean_analyzer",
+        "clean_probe",
         "check_consumables",
         "cuvette",
-        "system_liquid_above_20",
+        "system_liquid_above_30",
         "check_starter",
         "empty_solid_waste",
         "empty_liquid_waste",
@@ -55,7 +56,7 @@ def ensure_equipment_tables() -> None:
                 cur.execute(
                     f"CREATE TABLE IF NOT EXISTS `{table}` ("
                     + BASE_COLUMNS.format(check_columns=check_sql)
-                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
                 )
                 cur.execute(f"SHOW COLUMNS FROM `{table}`")
                 existing = {str(row["Field"]) for row in cur.fetchall()}
