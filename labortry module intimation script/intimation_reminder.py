@@ -20,9 +20,9 @@ GRACE_HOURS = int(os.getenv("INTIMATION_GRACE_HOURS", "2"))
 API_TIMEOUT_SECONDS = int(os.getenv("INTIMATION_API_TIMEOUT", "10"))
 
 DB_HOST = os.getenv("LABMOD_DB_HOST", "127.0.0.1")
-DB_PORT = int(os.getenv("LABMOD_DB_PORT", "3310"))
-DB_USER = os.getenv("LABMOD_DB_USER", "labmod")
-DB_PASSWORD = os.getenv("LABMOD_DB_PASSWORD", "labmod_pass_123")
+DB_PORT = int(os.getenv("LABMOD_DB_PORT", "3306"))
+DB_USER = os.getenv("LABMOD_DB_USER", "root")
+DB_PASSWORD = os.getenv("LABMOD_DB_PASSWORD", "")
 DB_NAME = os.getenv("LABMOD_DB_NAME", "laboratry_module_db")
 
 
@@ -42,19 +42,172 @@ class SlotConfig:
 
 # Weekly forms intentionally excluded.
 SLOTS: list[SlotConfig] = [
-    SlotConfig("mindray", "Mindray BC -780", "mindraybc", "datetime", "eightam", "8 AM", "08:00", "eightam", True),
-    SlotConfig("mindray", "Mindray BC -780", "mindraybc", "datetime", "fourpm", "4 PM", "16:00", "fourpm", True),
-    SlotConfig("mindraybc700", "Mindray BC700", "mindraybc700", "datetime", "eightam", "8 AM", "08:00", "eightam", True),
-    SlotConfig("cobaspure", "Cobas Pure C-303/E402", "cobaspure", "datetime", "onethirtyam", "1:30 AM", "01:30", "onethirtyam", True),
-    SlotConfig("cobaspure", "Cobas Pure C-303/E402", "cobaspure", "datetime", "eightam", "8 AM", "08:00", "eightam", True),
-    SlotConfig("cobaspure", "Cobas Pure C-303/E402", "cobaspure", "datetime", "sevenpm", "7 PM", "19:00", "sevenpm", True),
-    SlotConfig("attalica", "Siemens Attelica CI 1900", "attalica", "datetime", "twelvethirtyam", "12:30 AM", "00:30", "twelvethirtyam", True),
-    SlotConfig("attalica", "Siemens Attelica CI 1900", "attalica", "datetime", "eightam", "8 AM", "08:00", "eightam", True),
-    SlotConfig("attalica", "Siemens Attelica CI 1900", "attalica", "datetime", "sevenpm", "7 PM", "19:00", "sevenpm", True),
-    SlotConfig("aclelite", "ACL Elite", "aclelite", "datetimess", "eightam", "8 AM", "08:00", "eightam", True),
-    SlotConfig("lifotronic", "LIFOTRONIC H100", "lifotronic_h100_daily", "created_at", "nineam", "9 AM", "09:00", None, False),
-    SlotConfig("laurav2", "LAURA V2", "laurav2_daily", "created_at", "nineam", "9 AM", "09:00", None, False),
-    SlotConfig("sample_discard", "Sample Discard", "sample_discard", "discarded_at", "daily", "Daily", "14:00", None, False, 0),
+    SlotConfig(
+        "mindray",
+        "Mindray BC -780",
+        "mindraybc",
+        "datetime",
+        "eightam",
+        "8 AM",
+        "08:00",
+        "eightam",
+        True,
+    ),
+    SlotConfig(
+        "mindray",
+        "Mindray BC -780",
+        "mindraybc",
+        "datetime",
+        "fourpm",
+        "4 PM",
+        "16:00",
+        "fourpm",
+        True,
+    ),
+    SlotConfig(
+        "mindraybc700",
+        "Mindray BC700",
+        "mindraybc700",
+        "datetime",
+        "eightam",
+        "8 AM",
+        "08:00",
+        "eightam",
+        True,
+    ),
+    SlotConfig(
+        "cobaspure",
+        "Cobas Pure C-303/E402",
+        "cobaspure",
+        "datetime",
+        "onethirtyam",
+        "1:30 AM",
+        "01:30",
+        "onethirtyam",
+        True,
+    ),
+    SlotConfig(
+        "cobaspure",
+        "Cobas Pure C-303/E402",
+        "cobaspure",
+        "datetime",
+        "eightam",
+        "8 AM",
+        "08:00",
+        "eightam",
+        True,
+    ),
+    SlotConfig(
+        "cobaspure",
+        "Cobas Pure C-303/E402",
+        "cobaspure",
+        "datetime",
+        "sevenpm",
+        "7 PM",
+        "19:00",
+        "sevenpm",
+        True,
+    ),
+    SlotConfig(
+        "attalica",
+        "Siemens Attelica CI 1900",
+        "attalica",
+        "datetime",
+        "twelvethirtyam",
+        "12:30 AM",
+        "00:30",
+        "twelvethirtyam",
+        True,
+    ),
+    SlotConfig(
+        "attalica",
+        "Siemens Attelica CI 1900",
+        "attalica",
+        "datetime",
+        "eightam",
+        "8 AM",
+        "08:00",
+        "eightam",
+        True,
+    ),
+    SlotConfig(
+        "attalica",
+        "Siemens Attelica CI 1900",
+        "attalica",
+        "datetime",
+        "sevenpm",
+        "7 PM",
+        "19:00",
+        "sevenpm",
+        True,
+    ),
+    SlotConfig(
+        "aclelite",
+        "ACL Elite",
+        "aclelite",
+        "datetimess",
+        "eightam",
+        "8 AM",
+        "08:00",
+        "eightam",
+        True,
+    ),
+    SlotConfig(
+        "lifotronic",
+        "LIFOTRONIC H100",
+        "lifotronic_h100_daily",
+        "created_at",
+        "nineam",
+        "9 AM",
+        "09:00",
+        None,
+        False,
+    ),
+    SlotConfig(
+        "laurav2",
+        "LAURA V2",
+        "laurav2_daily",
+        "created_at",
+        "nineam",
+        "9 AM",
+        "09:00",
+        None,
+        False,
+    ),
+    SlotConfig(
+        "ecl760",
+        "ECL 760",
+        "ecl760_daily",
+        "datetime",
+        "eightam",
+        "8 AM",
+        "08:00",
+        None,
+        False,
+    ),
+    SlotConfig(
+        "maglumi800",
+        "Maglumi 800",
+        "maglumi800_daily",
+        "datetime",
+        "eightam",
+        "8 AM",
+        "08:00",
+        None,
+        False,
+    ),
+    SlotConfig(
+        "sample_discard",
+        "Sample Discard",
+        "sample_discard",
+        "discarded_at",
+        "daily",
+        "Daily",
+        "14:00",
+        None,
+        False,
+        0,
+    ),
 ]
 
 
@@ -94,14 +247,18 @@ def ensure_log_table(conn: pymysql.connections.Connection) -> None:
     conn.commit()
 
 
-def today_deadline(today: date, slot_hhmm: str, grace_hours: int | None = None) -> datetime:
+def today_deadline(
+    today: date, slot_hhmm: str, grace_hours: int | None = None
+) -> datetime:
     hh, mm = [int(x) for x in slot_hhmm.split(":")]
     slot_dt = datetime.combine(today, time(hh, mm), tzinfo=IST)
     effective_grace_hours = GRACE_HOURS if grace_hours is None else grace_hours
     return slot_dt + timedelta(hours=effective_grace_hours)
 
 
-def is_slot_filled(conn: pymysql.connections.Connection, slot: SlotConfig, slot_date: date) -> bool:
+def is_slot_filled(
+    conn: pymysql.connections.Connection, slot: SlotConfig, slot_date: date
+) -> bool:
     date_str = slot_date.strftime("%Y-%m-%d")
 
     where_parts: list[str] = []
@@ -128,7 +285,9 @@ def is_slot_filled(conn: pymysql.connections.Connection, slot: SlotConfig, slot_
     return bool(row)
 
 
-def already_sent_success(conn: pymysql.connections.Connection, slot: SlotConfig, slot_date: date) -> bool:
+def already_sent_success(
+    conn: pymysql.connections.Connection, slot: SlotConfig, slot_date: date
+) -> bool:
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -199,7 +358,9 @@ def send_group_message(message_text: str) -> tuple[bool, str | None, str | None]
             ok = 200 <= resp.status < 300
             return ok, text, None
     except error.HTTPError as e:
-        detail = e.read().decode("utf-8", errors="replace") if hasattr(e, "read") else str(e)
+        detail = (
+            e.read().decode("utf-8", errors="replace") if hasattr(e, "read") else str(e)
+        )
         return False, detail, f"HTTPError: {e.code}"
     except Exception as e:  # noqa: BLE001
         return False, None, str(e)
@@ -247,7 +408,9 @@ def main() -> int:
 
             message_text = build_message(slot, today, deadline)
             ok, api_resp, err_text = send_group_message(message_text)
-            upsert_log(conn, slot, today, deadline, ok, message_text, api_resp, err_text)
+            upsert_log(
+                conn, slot, today, deadline, ok, message_text, api_resp, err_text
+            )
 
             if ok:
                 sent += 1

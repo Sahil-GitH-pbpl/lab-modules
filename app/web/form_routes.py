@@ -116,6 +116,18 @@ def laurav2_daily_form():
     return render_form("laurav2_daily")
 
 
+@bp.route("/ecl760-daily-form", methods=["GET", "POST"])
+@login_required
+def ecl760_daily_form():
+    return render_form("ecl760_daily")
+
+
+@bp.route("/maglumi800-daily-form", methods=["GET", "POST"])
+@login_required
+def maglumi800_daily_form():
+    return render_form("maglumi800_daily")
+
+
 # @bp.route("/laurav2-weekly-form", methods=["GET", "POST"])
 # @login_required
 # def laurav2_weekly_form():

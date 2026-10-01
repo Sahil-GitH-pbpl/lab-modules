@@ -190,6 +190,37 @@ def dashboard():
         }
     )
 
+    daily_8am_equipment = [
+        ("ECL 760", "main.ecl760_daily_form", "ecl760_daily", "datetime", "main.ecl760_verification"),
+        (
+            "Maglumi 800",
+            "main.maglumi800_daily_form",
+            "maglumi800_daily",
+            "datetime",
+            "main.maglumi800_verification",
+        ),
+    ]
+    for title, fill_endpoint, table, datetime_col, verification_endpoint in daily_8am_equipment:
+        state_text, state_class = today_slot_fill_state_simple(table, datetime_col)
+        today_pending, total_pending = pending_counts_simple(table, datetime_col)
+        summaries.append(
+            {
+                "title": title,
+                "slots": [
+                    {
+                        "label": "8 AM",
+                        "state_text": state_text,
+                        "state_class": state_class,
+                        "fill_url": url_for(fill_endpoint),
+                    }
+                ],
+                "today_pending": today_pending,
+                "total_pending": total_pending,
+                "today_pending_url": url_for(verification_endpoint, date1=today_iso, date2=today_iso),
+                "total_pending_url": url_for(verification_endpoint),
+            }
+        )
+
     return render_template("dashboard.html", machine_summaries=summaries)
 
 

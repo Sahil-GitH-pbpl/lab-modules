@@ -188,6 +188,78 @@ def view_laurav2_weekly():
     return render_read_only_form("laurav2_weekly", "main.laurav2_verification")
 
 
+@bp.route("/view/ecl760-daily")
+@login_required
+def view_ecl760_daily():
+    return render_read_only_form("ecl760_daily", "main.ecl760_verification")
+
+
+@bp.route("/view/maglumi800-daily")
+@login_required
+def view_maglumi800_daily():
+    return render_read_only_form("maglumi800_daily", "main.maglumi800_verification")
+
+
+def render_daily_equipment_detail(
+    form_key: str,
+    table: str,
+    title: str,
+    verification_endpoint: str,
+):
+    record_id = request.values.get("id", type=int)
+    if not record_id:
+        flash("Missing record id", "error")
+        return redirect(url_for(verification_endpoint))
+
+    if request.method == "POST":
+        execute(
+            f"UPDATE {table} "
+            "SET status='1', verifiedby=%s, approvedby=%s, variftime=%s "
+            "WHERE id=%s",
+            (session.get("empname", ""), session.get("empname", ""), now_str(), record_id),
+        )
+        flash("Record verified successfully.", "success")
+        return redirect(url_for(verification_endpoint))
+
+    row = fetch_one(f"SELECT * FROM {table} WHERE id=%s", (record_id,))
+    if not row:
+        flash("Record not found", "error")
+        return redirect(url_for(verification_endpoint))
+
+    fields = detail_rows_from_config(form_key, row)
+    return render_template(
+        "detail_page.html",
+        title=title,
+        time_label="8 AM",
+        datetime_value=as_datetime_label(row.get("datetime")),
+        fields=fields,
+        can_verify=str(row.get("status", "0")) != "1",
+        back_url=url_for(verification_endpoint),
+    )
+
+
+@bp.route("/ecl760dailymainform", methods=["GET", "POST"])
+@login_required
+def ecl760dailymainform():
+    return render_daily_equipment_detail(
+        "ecl760_daily",
+        "ecl760_daily",
+        "ECL 760 Daily Detail",
+        "main.ecl760_verification",
+    )
+
+
+@bp.route("/maglumi800dailymainform", methods=["GET", "POST"])
+@login_required
+def maglumi800dailymainform():
+    return render_daily_equipment_detail(
+        "maglumi800_daily",
+        "maglumi800_daily",
+        "Maglumi 800 Daily Detail",
+        "main.maglumi800_verification",
+    )
+
+
 @bp.route("/lifotronicmainform", methods=["GET", "POST"])
 @login_required
 def lifotronicmainform():

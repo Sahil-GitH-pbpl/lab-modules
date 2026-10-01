@@ -588,3 +588,66 @@ def laurav2_verification():
         ],
         pagination=pagination,
     )
+
+
+def daily_equipment_verification(
+    table: str,
+    title: str,
+    status_endpoint: str,
+    view_endpoint: str,
+):
+    date1 = (request.values.get("date1") or "").strip()
+    date2 = (request.values.get("date2") or "").strip()
+    rows, date1, date2, _timerec, pagination = filtered_rows(table, "datetime", allow_time=False)
+
+    items = []
+    row_start = pagination["start_index"] if pagination["start_index"] else 1
+    for idx, row in enumerate(rows, start=row_start):
+        status_text, status_class = status_meta(row.get("status", "0"))
+        items.append(
+            {
+                "id": row["id"],
+                "sr": idx,
+                "date": as_date_label(row.get("datetime")),
+                "datetime": as_datetime_label(row.get("datetime")),
+                "time": "8 AM",
+                "status_text": status_text,
+                "status_class": status_class,
+                "status_url": url_for(status_endpoint, id=row["id"]),
+                "view_url": url_for(view_endpoint, id=row["id"]),
+            }
+        )
+
+    return render_template(
+        "list_page.html",
+        title=title,
+        items=items,
+        date1=date1,
+        date2=date2,
+        timerec="",
+        show_time_filter=False,
+        time_options=[],
+        pagination=pagination,
+    )
+
+
+@bp.route("/ecl760verification", methods=["GET"])
+@login_required
+def ecl760_verification():
+    return daily_equipment_verification(
+        "ecl760_daily",
+        "ECL 760 Verification",
+        "main.ecl760dailymainform",
+        "main.view_ecl760_daily",
+    )
+
+
+@bp.route("/maglumi800verification", methods=["GET"])
+@login_required
+def maglumi800_verification():
+    return daily_equipment_verification(
+        "maglumi800_daily",
+        "Maglumi 800 Verification",
+        "main.maglumi800dailymainform",
+        "main.view_maglumi800_daily",
+    )
