@@ -72,6 +72,44 @@
   margin-bottom: 12px;
 }
 
+.discard-list-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.discard-list-copy {
+  min-width: 0;
+}
+
+.discard-list-filters {
+  margin-bottom: 0;
+  margin-left: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.discard-list-filters .field-label {
+  margin-bottom: 4px;
+  font-size: 0.74rem;
+}
+
+.discard-list-filters .field-input {
+  min-width: 132px;
+  min-height: 34px;
+  padding: 6px 9px;
+}
+
+.discard-list-filters .verification-search-btn {
+  margin-top: 0;
+  min-height: 34px;
+  padding: 7px 12px;
+}
+
 .verification-panel .field-input {
   min-height: 36px;
   padding: 7px 10px;
@@ -215,6 +253,211 @@
   background: linear-gradient(135deg, #e3dcff 0%, #cfc0ff 100%);
 }
 
+.sample-discard-input {
+  width: 100%;
+  min-height: 190px;
+  resize: vertical;
+  line-height: 1.35;
+}
+
+.adverse-report-panel {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.adverse-report-form {
+  margin-top: 18px;
+}
+
+.adverse-report-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.adverse-report-wide {
+  grid-column: 1 / -1;
+}
+
+.adverse-report-textarea {
+  min-height: 124px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.required-mark {
+  color: #c2410c;
+  font-weight: 800;
+}
+
+.radio-group {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.radio-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 92px;
+  padding: 9px 12px;
+  border: 1px solid #cfe1dd;
+  border-radius: 999px;
+  background: #f8fcfb;
+  color: #173236;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #0f766e;
+}
+
+.adverse-report-submit {
+  width: fit-content;
+  justify-self: end;
+}
+
+.adverse-report-list-panel {
+  max-width: none;
+}
+
+.adverse-report-table-wrap {
+  max-height: calc(100vh - 230px);
+}
+
+.adverse-report-table {
+  min-width: 1180px;
+}
+
+.adverse-report-table th,
+.adverse-report-table td {
+  white-space: nowrap;
+}
+
+.adverse-report-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 10px;
+}
+
+.adverse-report-detail-card {
+  min-width: 0;
+  border: 1px solid #d4e5e1;
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 8px 16px rgba(11, 42, 39, 0.08);
+  padding: 12px;
+}
+
+.adverse-report-detail-card h3 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: #0f5f59;
+}
+
+.adverse-report-detail-card p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #27464a;
+  line-height: 1.45;
+}
+
+.adverse-report-detail-panel {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.adverse-report-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.adverse-report-summary-card {
+  display: grid;
+  gap: 5px;
+  padding: 12px 14px;
+  border: 1px solid #d5e6e2;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #ffffff 0%, #f5fbfa 100%);
+  box-shadow: 0 8px 18px rgba(11, 42, 39, 0.07);
+}
+
+.adverse-report-summary-card span {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5b7478;
+}
+
+.adverse-report-summary-card strong {
+  color: #173236;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.adverse-report-detail-page-grid {
+  grid-template-columns: 1fr;
+}
+
+.adverse-report-detail-page-grid .adverse-report-detail-card p {
+  max-height: none;
+  min-height: 90px;
+}
+
+@media (max-width: 780px) {
+  .adverse-report-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .adverse-report-submit {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .adverse-report-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.discard-samples-cell {
+  min-width: 440px;
+  text-align: left;
+  line-height: 1.55;
+}
+
+.verification-panel .data-table tbody tr:nth-child(even) {
+  background: #eef6f5;
+}
+
+.discard-samples-more {
+  white-space: normal;
+}
+
+.discard-see-more {
+  margin-left: 8px;
+  padding: 5px 11px;
+  border: 1px solid #e2b145;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ffd567, #f39c36);
+  color: #6a3d00;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(186, 120, 12, 0.18);
+  cursor: pointer;
+}
+
+.discard-see-more:hover {
+  background: linear-gradient(135deg, #ffc94c, #ec8d1f);
+}
+
 .card-grid.dashboard-card-grid {
   grid-template-columns: minmax(180px, 220px);
   justify-content: center;
@@ -223,5 +466,16 @@
 @media (max-width: 900px) {
   .dashboard-sections {
     grid-template-columns: 1fr;
+  }
+
+  .discard-list-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .discard-list-filters {
+    margin-left: 0;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }

@@ -10,16 +10,41 @@
   </div>
 
   <nav class="main-nav">
-    {% for group in nav_items %}
-      <div class="nav-dropdown">
-        <span class="nav-root">{{ group.label }}</span>
-        <div class="dropdown-menu">
-          {% for item in group.children %}
-            <a href="{{ url_for(item.endpoint) }}" class="dropdown-item">{{ item.label }}</a>
-          {% endfor %}
+    <details class="menu-drawer">
+      <summary class="menu-trigger" aria-label="Open menu">
+        <span class="menu-icon" aria-hidden="true">&#9776;</span>
+        <span class="menu-label">Menu</span>
+      </summary>
+      <div class="menu-panel">
+        <details class="machine-menu equipment-menu">
+          <summary class="machine-trigger equipment-trigger">
+            <span class="equipment-trigger-copy">
+              <span>Equipment Maintenance</span>
+              <small>All machine forms</small>
+            </span>
+            <span class="equipment-trigger-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="machine-items">
+            {% for group in nav_items %}
+              <details class="machine-group">
+                <summary class="machine-group-title">{{ group.label }}</summary>
+                <div class="machine-link-list">
+                  {% for item in group.children %}
+                    <a href="{{ url_for(item.endpoint) }}" class="dropdown-item">{{ item.label }}</a>
+                  {% endfor %}
+                </div>
+              </details>
+            {% endfor %}
+          </div>
+        </details>
+        <div class="menu-quick-links">
+          <div class="menu-section-label">Other Links</div>
+          <a href="{{ url_for('main.temperature') }}" class="dropdown-item menu-single-link">Temperature</a>
+          <a href="{{ url_for('main.adverse_instance_reporting') }}" class="dropdown-item menu-single-link">Adverse Instance Reporting</a>
+          <a href="{{ url_for('main.adverse_instance_reports') }}" class="dropdown-item menu-single-link">View Adverse Reports</a>
         </div>
       </div>
-    {% endfor %}
+    </details>
   </nav>
 
   <div class="user-block">

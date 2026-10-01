@@ -3,15 +3,19 @@ from __future__ import annotations
 from datetime import datetime
 import re
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from flask import flash, redirect, render_template, request, session, url_for
 
 from ..db import execute, fetch_all, fetch_one
 from ..forms_config import FORM_CONFIGS, TIME_LABELS
 
+IST = ZoneInfo("Asia/Kolkata")
+_REQUIRED_COLUMN_CACHE: dict[str, list[tuple[str, str]]] = {}
+
 
 def now_str() -> str:
-    return datetime.now().strftime("%Y-%m-%d %I:%M %p")
+    return datetime.now(IST).strftime("%Y-%m-%d %I:%M %p")
 
 
 def digits_only(value: str) -> str:
@@ -47,11 +51,25 @@ def status_meta(status_value: Any) -> tuple[str, str]:
     return "Pending", "status-warn"
 
 
+def _date_expr(datetime_col: str) -> str:
+    # Legacy machine tables store datetime in varchar like "YYYY-MM-DD hh:mm AM/PM".
+    if datetime_col in ("datetime", "datetimess"):
+        return f"LEFT({datetime_col}, 10)"
+    return f"DATE({datetime_col})"
+
+
+def _today_where(datetime_col: str) -> str:
+    if datetime_col in ("datetime", "datetimess"):
+        return f"LEFT({datetime_col}, 10)=CAST(CURDATE() AS CHAR)"
+    return f"DATE({datetime_col})=CURDATE()"
+
+
 def today_slot_fill_state(table: str, datetime_col: str, timerec: str) -> tuple[str, str]:
+    date_where = _today_where(datetime_col)
     row = fetch_one(
         f"SELECT status, formfill FROM {table} "
-        f"WHERE DATE({datetime_col})=CURDATE() AND timerec=%s "
-        f"ORDER BY {datetime_col} DESC LIMIT 1",
+        f"WHERE {date_where} AND timerec=%s "
+        "ORDER BY id DESC LIMIT 1",
         (timerec,),
     )
     if not row:
@@ -62,9 +80,10 @@ def today_slot_fill_state(table: str, datetime_col: str, timerec: str) -> tuple[
 
 
 def pending_counts(table: str, datetime_col: str) -> tuple[int, int]:
+    date_where = _today_where(datetime_col)
     today_row = fetch_one(
         f"SELECT COUNT(*) AS cnt FROM {table} "
-        f"WHERE DATE({datetime_col})=CURDATE() "
+        f"WHERE {date_where} "
         "AND COALESCE(status, '0') <> '1' "
         "AND COALESCE(formfill, '0') <> '1'"
     ) or {}
@@ -77,10 +96,25 @@ def pending_counts(table: str, datetime_col: str) -> tuple[int, int]:
 
 
 def today_slot_fill_state_simple(table: str, datetime_col: str) -> tuple[str, str]:
+    date_where = _today_where(datetime_col)
     try:
         row = fetch_one(
             f"SELECT 1 AS found FROM {table} "
-            f"WHERE DATE({datetime_col})=CURDATE() "
+            f"WHERE {date_where} "
+            f"ORDER BY {datetime_col} DESC LIMIT 1"
+        )
+    except Exception:
+        return "Not Fill", "slot-notfill"
+    if not row:
+        return "Not Fill", "slot-notfill"
+    return "Filled", "slot-filled"
+
+
+def week_slot_fill_state_simple(table: str, datetime_col: str) -> tuple[str, str]:
+    try:
+        row = fetch_one(
+            f"SELECT 1 AS found FROM {table} "
+            f"WHERE YEARWEEK({datetime_col}, 1)=YEARWEEK(CURDATE(), 1) "
             f"ORDER BY {datetime_col} DESC LIMIT 1"
         )
     except Exception:
@@ -91,10 +125,11 @@ def today_slot_fill_state_simple(table: str, datetime_col: str) -> tuple[str, st
 
 
 def pending_counts_simple(table: str, datetime_col: str) -> tuple[int, int]:
+    date_where = _today_where(datetime_col)
     try:
         today_row = fetch_one(
             f"SELECT COUNT(*) AS cnt FROM {table} "
-            f"WHERE DATE({datetime_col})=CURDATE() "
+            f"WHERE {date_where} "
             "AND COALESCE(status, '0') <> '1'"
         ) or {}
         total_row = fetch_one(
@@ -151,10 +186,76 @@ def insert_form_record(form_key: str, form_data: dict[str, Any]) -> None:
         columns.append("submitform")
         params.append(str(config["submitform"]))
 
+    # Backfill required DB columns that are not part of this specific form.
+    existing = {c.lower() for c in columns}
+    for col_name, col_type in _required_columns_without_default(config["table"]):
+        if col_name.lower() in existing:
+            continue
+        columns.append(col_name)
+        params.append(_default_value_for_type(col_type))
+
     col_sql = ", ".join(f"`{c}`" for c in columns)
     placeholders = ", ".join(["%s"] * len(columns))
     sql = f"INSERT INTO {config['table']} ({col_sql}) VALUES ({placeholders})"
     execute(sql, tuple(params))
+
+
+def _required_columns_without_default(table: str) -> list[tuple[str, str]]:
+    cached = _REQUIRED_COLUMN_CACHE.get(table)
+    if cached is not None:
+        return cached
+
+    rows = fetch_all(f"SHOW COLUMNS FROM `{table}`")
+    required: list[tuple[str, str]] = []
+    for row in rows:
+        name = str(row.get("Field") or "")
+        nullable = str(row.get("Null") or "")
+        default = row.get("Default")
+        extra = str(row.get("Extra") or "").lower()
+        col_type = str(row.get("Type") or "")
+
+        if not name:
+            continue
+        if "auto_increment" in extra:
+            continue
+        if nullable.upper() == "NO" and default is None:
+            required.append((name, col_type))
+
+    _REQUIRED_COLUMN_CACHE[table] = required
+    return required
+
+
+def _default_value_for_type(col_type: str) -> Any:
+    t = col_type.lower()
+    if any(x in t for x in ("int", "decimal", "numeric", "float", "double", "bit", "bool")):
+        return 0
+    return ""
+
+
+def slot_already_submitted_today(form_key: str) -> bool:
+    config = FORM_CONFIGS[form_key]
+    dt_col = config.get("datetime_column")
+    timerec = config.get("timerec")
+    if not dt_col or not timerec:
+        if not dt_col:
+            return False
+
+    date_where = _today_where(dt_col)
+
+    if timerec:
+        row = fetch_one(
+            f"SELECT id FROM {config['table']} "
+            f"WHERE {date_where} AND timerec=%s "
+            "ORDER BY id DESC LIMIT 1",
+            (timerec,),
+        )
+    else:
+        row = fetch_one(
+            f"SELECT id FROM {config['table']} "
+            f"WHERE {date_where} "
+            "ORDER BY id DESC LIMIT 1"
+        )
+    return bool(row)
 
 
 def collect_request_values(config: dict[str, Any]) -> dict[str, str]:
@@ -241,9 +342,10 @@ def filtered_rows(table: str, datetime_col: str, allow_time: bool = True):
 
     where = []
     params: list[Any] = []
+    date_filter_expr = _date_expr(datetime_col)
 
     if date1 and date2:
-        where.append(f"DATE({datetime_col}) BETWEEN %s AND %s")
+        where.append(f"{date_filter_expr} BETWEEN %s AND %s")
         params.extend([date1, date2])
 
     if allow_time and timerec:

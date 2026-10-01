@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel panel-form">
+    <div class="panel-head form-top-head">
+      <div class="form-top-brand">
+        <img src="{{ url_for('static', filename='images/Logoicon.png') }}" alt="Bhasin Lab" class="form-top-logo" />
+        <div class="form-top-brand-text">
+          <h3>Dr Bhasin's Lab</h3>
+          <span>Trust of quality &amp; service</span>
+        </div>
+      </div>
+      <div class="form-top-copy">
+        <h1 class="panel-title">{{ title }}</h1>
+        <p class="panel-sub">{{ panel_subtitle }}</p>
+      </div>
+    </div>
+
+    <form method="post" class="form-shell">
+      <div class="form-section">
+        <h2>Sample Discard</h2>
+        <div class="field-card">
+          <label class="field-label" for="department">Department:</label>
+          <select id="department" name="department" class="field-input" required>
+            <option value="">Select Department</option>
+            {% for department in department_options %}
+              <option value="{{ department }}" {% if selected_department == department %}selected{% endif %}>{{ department }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field-card">
+          <label class="field-label">Sample ID:</label>
+          <textarea
+            name="sample_ids"
+            class="field-input sample-discard-input js-sample-scan-format"
+            rows="7"
+            placeholder="Scan sample IDs here..."
+            required
+          ></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save Discard Samples</button>
+    </form>
+  </section>
+{% endblock %}

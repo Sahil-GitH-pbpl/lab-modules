@@ -17,6 +17,72 @@ def view_mindray4pm():
     return render_read_only_form("mindray4pm", "main.mindrayverification")
 
 
+@bp.route("/mindraymainform8am", methods=["GET", "POST"])
+@login_required
+def mindraymainform8am():
+    record_id = request.values.get("id", type=int)
+    if not record_id:
+        flash("Missing record id", "error")
+        return redirect(url_for("main.mindrayverification"))
+
+    if request.method == "POST":
+        execute(
+            "UPDATE mindraybc SET status='1', verifiedby=%s, variftime=%s WHERE timerec='eightam' AND id=%s",
+            (session.get("empname", ""), now_str(), record_id),
+        )
+        flash("Record verified successfully.", "success")
+        return redirect(url_for("main.mindrayverification"))
+
+    row = fetch_one("SELECT * FROM mindraybc WHERE timerec='eightam' AND id=%s LIMIT 1", (record_id,))
+    if not row:
+        flash("Record not found", "error")
+        return redirect(url_for("main.mindrayverification"))
+
+    fields = detail_rows_from_config("mindray8am", row)
+    return render_template(
+        "detail_page.html",
+        title="Mindray BC -780 - 8AM",
+        time_label="8 AM",
+        datetime_value=as_datetime_label(row.get("datetime")),
+        fields=fields,
+        can_verify=str(row.get("status", "0")) != "1",
+        back_url=url_for("main.mindrayverification"),
+    )
+
+
+@bp.route("/mindraymainform4pm", methods=["GET", "POST"])
+@login_required
+def mindraymainform4pm():
+    record_id = request.values.get("id", type=int)
+    if not record_id:
+        flash("Missing record id", "error")
+        return redirect(url_for("main.mindrayverification"))
+
+    if request.method == "POST":
+        execute(
+            "UPDATE mindraybc SET status='1', verifiedby=%s, variftime=%s WHERE timerec='fourpm' AND id=%s",
+            (session.get("empname", ""), now_str(), record_id),
+        )
+        flash("Record verified successfully.", "success")
+        return redirect(url_for("main.mindrayverification"))
+
+    row = fetch_one("SELECT * FROM mindraybc WHERE timerec='fourpm' AND id=%s LIMIT 1", (record_id,))
+    if not row:
+        flash("Record not found", "error")
+        return redirect(url_for("main.mindrayverification"))
+
+    fields = detail_rows_from_config("mindray4pm", row)
+    return render_template(
+        "detail_page.html",
+        title="Mindray BC -780 - 4PM",
+        time_label="4 PM",
+        datetime_value=as_datetime_label(row.get("datetime")),
+        fields=fields,
+        can_verify=str(row.get("status", "0")) != "1",
+        back_url=url_for("main.mindrayverification"),
+    )
+
+
 @bp.route("/view/mindraybc7008am")
 @login_required
 def view_mindraybc7008am():
@@ -185,7 +251,7 @@ def laurav2dailymainform():
         "detail_page.html",
         title="LAURA V2 Daily Detail",
         time_label="Daily",
-        datetime_value=as_datetime_label(row.get("created_at")),
+        datetime_value=as_datetime_label(row.get("datetime")),
         fields=fields,
         can_verify=str(row.get("status", "0")) != "1",
         back_url=url_for("main.laurav2_verification"),
@@ -220,7 +286,7 @@ def laurav2weeklymainform():
         "detail_page.html",
         title="LAURA V2 Weekly Detail",
         time_label="Weekly",
-        datetime_value=as_datetime_label(row.get("created_at")),
+        datetime_value=as_datetime_label(row.get("datetime")),
         fields=fields,
         can_verify=str(row.get("status", "0")) != "1",
         back_url=url_for("main.laurav2_verification"),
@@ -265,19 +331,19 @@ def lifotronicweeklymainform():
 @bp.route("/cobaspurelists", methods=["GET", "POST"])
 @login_required
 def cobaspurelists():
-    return render_cobas_detail("cobaspure8am", "eightam", "Cobas Pure Detail")
+    return render_cobas_detail("cobaspure8am", "eightam", "Cobas Pure C-303/E402 Detail")
 
 
 @bp.route("/cobaslistsevenpm", methods=["GET", "POST"])
 @login_required
 def cobaslistsevenpm():
-    return render_cobas_detail("cobaspure7pm", "sevenpm", "Cobas Pure Detail")
+    return render_cobas_detail("cobaspure7pm", "sevenpm", "Cobas Pure C-303/E402 Detail")
 
 
 @bp.route("/cobaspureonethirtylist", methods=["GET", "POST"])
 @login_required
 def cobaspureonethirtylist():
-    return render_cobas_detail("cobaspure130am", "onethirtyam", "Cobas Pure Detail")
+    return render_cobas_detail("cobaspure130am", "onethirtyam", "Cobas Pure C-303/E402 Detail")
 
 
 @bp.route("/aclelitemainform", methods=["GET", "POST"])

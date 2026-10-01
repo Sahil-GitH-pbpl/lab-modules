@@ -32,6 +32,20 @@ document.addEventListener("click", async (event) => {
 });
 
 (() => {
+  const machineMenus = document.querySelectorAll(".machine-menu");
+  machineMenus.forEach((menu) => {
+    menu.addEventListener("toggle", () => {
+      if (!menu.open) return;
+      const panel = menu.closest(".menu-panel");
+      if (!panel) return;
+      panel.querySelectorAll(".machine-menu").forEach((node) => {
+        if (node !== menu) node.open = false;
+      });
+    });
+  });
+})();
+
+(() => {
   const input = document.getElementById("usernameInput");
   const list = document.getElementById("usernameSuggestions");
   if (!input || !list) return;
@@ -157,3 +171,67 @@ document.addEventListener("click", async (event) => {
     }
   });
 })();
+
+(() => {
+  const field = document.querySelector(".js-sample-scan-format");
+  if (!field) return;
+
+  let timer = null;
+
+  const parseTokens = (rawValue) => {
+    const raw = String(rawValue || "").trim();
+    if (!raw) return [];
+
+    const barcodeRegex = /\d+?-\d(?=\d|$)/g;
+    const chunks = raw
+      .replaceAll(",", " ")
+      .split(/[\s,;\n\r\t]+/g)
+      .map((v) => v.trim())
+      .filter(Boolean);
+
+    const out = [];
+    for (const chunk of chunks) {
+      const full = chunk.match(/^\d+-\d$/);
+      if (full) {
+        out.push(chunk);
+        continue;
+      }
+
+      const matches = chunk.match(barcodeRegex) || [];
+      if (matches.length && matches.join("") === chunk) {
+        out.push(...matches);
+        continue;
+      }
+
+      out.push(chunk);
+    }
+
+    return out;
+  };
+
+  const normalize = () => {
+    const tokens = parseTokens(field.value);
+    field.value = tokens.join(", ");
+  };
+
+  field.addEventListener("input", () => {
+    if (timer) clearTimeout(timer);
+    // Small delay helps scanner bursts settle before normalization.
+    timer = setTimeout(normalize, 60);
+  });
+
+  field.addEventListener("blur", normalize);
+})();
+
+document.addEventListener("click", (event) => {
+  const btn = event.target.closest(".js-discard-see-more");
+  if (!btn) return;
+
+  const cell = btn.closest(".discard-samples-cell");
+  const hiddenPart = cell?.querySelector(".discard-samples-more");
+  if (!cell || !hiddenPart) return;
+
+  const isExpanded = !hiddenPart.hidden;
+  hiddenPart.hidden = isExpanded;
+  btn.textContent = isExpanded ? "See more" : "See less";
+});

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel adverse-report-detail-panel">
+    <div class="panel-head discard-list-head">
+      <div class="discard-list-copy">
+        <h1 class="panel-title">{{ title }}</h1>
+        <p class="panel-sub">Report #{{ report.id }} submitted on {{ report.created_at or "-" }}.</p>
+      </div>
+      <a class="btn btn-primary" href="{{ url_for('main.adverse_instance_reports') }}">Back to Reports</a>
+    </div>
+
+    <div class="adverse-report-summary-grid">
+      <div class="adverse-report-summary-card">
+        <span>Incident Date</span>
+        <strong>{{ report.incident_date or "-" }}</strong>
+      </div>
+      <div class="adverse-report-summary-card">
+        <span>Reporting Date</span>
+        <strong>{{ report.reporting_date or "-" }}</strong>
+      </div>
+      <div class="adverse-report-summary-card">
+        <span>Nature</span>
+        <strong>{{ report.incident_nature or "-" }}</strong>
+      </div>
+      <div class="adverse-report-summary-card">
+        <span>Staff Involved</span>
+        <strong>{{ report.staff_involved or "-" }}</strong>
+      </div>
+      <div class="adverse-report-summary-card">
+        <span>Injury/Hazard</span>
+        <strong>{{ report.injury_hazard or "-" }}</strong>
+      </div>
+      <div class="adverse-report-summary-card">
+        <span>Matter Resolved</span>
+        <strong>{{ report.matter_resolved or "-" }}</strong>
+      </div>
+      <div class="adverse-report-summary-card">
+        <span>Reported To</span>
+        <strong>{{ report.reported_to or "-" }}</strong>
+      </div>
+    </div>
+
+    <div class="adverse-report-detail-grid adverse-report-detail-page-grid">
+      <article class="adverse-report-detail-card">
+        <h3>Details of Incident</h3>
+        <p>{{ report.incident_details or "-" }}</p>
+      </article>
+      <article class="adverse-report-detail-card">
+        <h3>Corrective Action Taken</h3>
+        <p>{{ report.corrective_action or "-" }}</p>
+      </article>
+      <article class="adverse-report-detail-card">
+        <h3>Preventive Action Taken</h3>
+        <p>{{ report.preventive_action or "-" }}</p>
+      </article>
+    </div>
+  </section>
+{% endblock %}

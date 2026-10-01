@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel verification-panel">
+    <div class="panel-head discard-list-head">
+      <div class="discard-list-copy">
+        <h1 class="panel-title">{{ title }}</h1>
+        <p class="panel-sub">List of discarded sample IDs with date-time.</p>
+      </div>
+
+      <form method="get" class="filter-row discard-list-filters">
+        {# Department filter temporarily disabled. #}
+        {# <div>
+          <label class="field-label">Department</label>
+          <select name="department" class="field-input">
+            <option value="">All</option>
+            {% for department in department_options %}
+              <option value="{{ department }}" {% if selected_department == department %}selected{% endif %}>{{ department }}</option>
+            {% endfor %}
+          </select>
+        </div> #}
+        <div>
+          <label class="field-label">Rows</label>
+          <select name="rows" class="field-input">
+            {% for value in row_limit_options %}
+              <option value="{{ value }}" {% if selected_rows == value %}selected{% endif %}>
+                {{ value|upper if value == 'all' else value }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-primary verification-search-btn" type="submit">Apply</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Sr. No</th>
+            <th>Department</th>
+            <th>Discard Sample ID</th>
+            <th>Discard At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+            <tr>
+              <td>{{ item.sr }}</td>
+              <td>{{ item.department or "-" }}</td>
+              <td class="discard-samples-cell">
+                <span>{{ item.sample_ids_preview }}</span>
+                {% if item.sample_ids_has_more %}
+                  <span class="discard-samples-more" hidden>, {{ item.sample_ids_remaining }}</span>
+                  <button type="button" class="discard-see-more js-discard-see-more">See more</button>
+                {% endif %}
+              </td>
+              <td>{{ item.discarded_at }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="empty-row">No discard sample records found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

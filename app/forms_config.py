@@ -12,7 +12,7 @@ def number(name: str, label: str, section: str = "Checklist"):
 
 FORM_CONFIGS = {
     "mindray8am": {
-        "title": "Mindray BC 780 - 8AM",
+        "title": "Mindray BC -780 - 8AM",
         "table": "mindraybc",
         "timerec": "eightam",
         "datetime_column": "datetime",
@@ -70,7 +70,7 @@ FORM_CONFIGS = {
         ],
     },
     "mindray4pm": {
-        "title": "Mindray BC 780 - 4PM",
+        "title": "Mindray BC -780 - 4PM",
         "table": "mindraybc",
         "timerec": "fourpm",
         "datetime_column": "datetime",
@@ -86,7 +86,7 @@ FORM_CONFIGS = {
         ],
     },
     "cobaspure8am": {
-        "title": "Roche Cobas Pure - 8AM",
+        "title": "Cobas Pure C-303/E402 - 8AM",
         "table": "cobaspure",
         "timerec": "eightam",
         "datetime_column": "datetime",
@@ -150,7 +150,7 @@ FORM_CONFIGS = {
         ],
     },
     "cobaspure7pm": {
-        "title": "Roche Cobas Pure - 7PM",
+        "title": "Cobas Pure C-303/E402 - 7PM",
         "table": "cobaspure",
         "timerec": "sevenpm",
         "datetime_column": "datetime",
@@ -226,7 +226,7 @@ FORM_CONFIGS = {
         ],
     },
     "cobaspure130am": {
-        "title": "Roche Cobas Pure - 1:30AM",
+        "title": "Cobas Pure C-303/E402 - 1:30AM",
         "table": "cobaspure",
         "timerec": "onethirtyam",
         "datetime_column": "datetime",
@@ -284,7 +284,7 @@ FORM_CONFIGS = {
         ],
     },
     "attalica8am": {
-        "title": "Attalica - 8AM",
+        "title": "Siemens Attelica CI 1900 - 8AM",
         "table": "attalica",
         "timerec": "eightam",
         "datetime_column": "datetime",
@@ -338,7 +338,7 @@ FORM_CONFIGS = {
         ],
     },
     "attalica7pm": {
-        "title": "Attalica - 7PM",
+        "title": "Siemens Attelica CI 1900 - 7PM",
         "table": "attalica",
         "timerec": "sevenpm",
         "datetime_column": "datetime",
@@ -348,7 +348,7 @@ FORM_CONFIGS = {
         "fields": "__same_as_attalica8am__",
     },
     "attalica12am": {
-        "title": "Attalica - 12:30AM",
+        "title": "Siemens Attelica CI 1900 - 12:30AM",
         "table": "attalica",
         "timerec": "twelvethirtyam",
         "datetime_column": "datetime",
@@ -496,7 +496,7 @@ FORM_CONFIGS["attalica12am"]["fields"] = FORM_CONFIGS["attalica8am"]["fields"]
 
 NAV_ITEMS = [
     {
-        "label": "Mindray",
+        "label": "Mindray BC -780",
         "children": [
             {"label": "8AM Form", "endpoint": "main.mindray8am"},
             {"label": "4PM Form", "endpoint": "main.mindray4pm"},
@@ -511,7 +511,7 @@ NAV_ITEMS = [
         ],
     },
     {
-        "label": "Cobas Pure",
+        "label": "Cobas Pure C-303/E402",
         "children": [
             {"label": "8AM Form", "endpoint": "main.cobaspure8am"},
             {"label": "7PM Form", "endpoint": "main.cobaspure7pm"},
@@ -520,7 +520,7 @@ NAV_ITEMS = [
         ],
     },
     {
-        "label": "Attalica",
+        "label": "Siemens Attelica CI 1900",
         "children": [
             {"label": "8AM Form", "endpoint": "main.attalica8am"},
             {"label": "7PM Form", "endpoint": "main.attalica7pm"},
@@ -539,7 +539,7 @@ NAV_ITEMS = [
         "label": "LIFOTRONIC H100",
         "children": [
             {"label": "9 AM", "endpoint": "main.lifotronic_daily_form"},
-            {"label": "Weekly Form", "endpoint": "main.lifotronic_weekly_form"},
+            {"label": "Monday Form", "endpoint": "main.lifotronic_weekly_form"},
             {"label": "Verification", "endpoint": "main.lifotronicverification"},
         ],
     },
@@ -549,6 +549,13 @@ NAV_ITEMS = [
             {"label": "9 AM", "endpoint": "main.laurav2_daily_form"},
             # {"label": "Weekly Form", "endpoint": "main.laurav2_weekly_form"},  # disabled for now
             {"label": "Verification", "endpoint": "main.laurav2_verification"},
+        ],
+    },
+    {
+        "label": "Sample Discard",
+        "children": [
+            {"label": "Sample Discard Form", "endpoint": "main.sample_discard_form"},
+            {"label": "All Discard Samples", "endpoint": "main.sample_discard_list"},
         ],
     },
 ]
@@ -562,4 +569,3 @@ TIME_LABELS = {
     "twelveam": "12AM",
     "twelvethirtyam": "12:30 AM",
 }
-

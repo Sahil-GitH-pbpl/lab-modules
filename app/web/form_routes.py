@@ -1,14 +1,23 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from flask import flash, redirect, render_template, request, session
 
 from ..forms_config import FORM_CONFIGS
 from .blueprint import bp, login_required
-from .helpers import collect_request_values, group_fields, insert_form_record
+from .helpers import collect_request_values, group_fields, insert_form_record, slot_already_submitted_today
 
 
 def render_form(form_key: str):
     config = FORM_CONFIGS[form_key]
 
     if request.method == "POST":
+        if form_key == "lifotronic_weekly" and datetime.now(ZoneInfo("Asia/Kolkata")).weekday() != 0:
+            flash("Weekly form can be submitted only on Monday.", "error")
+            return redirect(request.path)
+        if slot_already_submitted_today(form_key):
+            flash("Today's form for this time slot is already submitted.", "error")
+            return redirect(request.path)
         form_data = collect_request_values(config)
         insert_form_record(form_key, form_data)
         flash("Form submitted successfully.", "success")
@@ -26,18 +35,6 @@ def render_form(form_key: str):
         field_values={},
         panel_subtitle=config.get("panel_subtitle", "Fill the checklist and submit."),
         record_meta=record_meta,
-    )
-
-
-def render_lifotronic_placeholder(title: str):
-    return render_template(
-        "form_page.html",
-        title=title,
-        sections=[],
-        read_only=True,
-        field_values={},
-        panel_subtitle="Form layout will be configured here.",
-        record_meta="",
     )
 
 
@@ -123,4 +120,3 @@ def laurav2_daily_form():
 # @login_required
 # def laurav2_weekly_form():
 #     return render_form("laurav2_weekly")
-

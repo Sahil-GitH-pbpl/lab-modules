@@ -16,15 +16,22 @@ def mindrayverification():
         "eightam": "main.view_mindray8am",
         "fourpm": "main.view_mindray4pm",
     }
+    status_endpoint_by_time = {
+        "eightam": "main.mindraymainform8am",
+        "fourpm": "main.mindraymainform4pm",
+    }
 
     items = []
     row_start = pagination["start_index"] if pagination["start_index"] else 1
     for idx, row in enumerate(rows, start=row_start):
         status_text, status_class = status_meta(row.get("status", "0"))
         record_time = str(row.get("timerec", ""))
+        if record_time not in view_endpoint_by_time:
+            continue
         view_endpoint = view_endpoint_by_time.get(record_time)
         view_url = url_for(view_endpoint, id=row["id"]) if view_endpoint else ""
-        status_url = view_url
+        status_endpoint = status_endpoint_by_time.get(record_time)
+        status_url = url_for(status_endpoint, id=row["id"]) if status_endpoint else ""
 
         if str(row.get("formfill", "0")) == "1":
             status_text = "Not Fill"
@@ -48,7 +55,7 @@ def mindrayverification():
 
     return render_template(
         "list_page.html",
-        title="Mindray Verification",
+        title="Mindray BC -780 Verification",
         items=items,
         date1=date1,
         date2=date2,
@@ -162,7 +169,7 @@ def cobaspureall():
 
     return render_template(
         "list_page.html",
-        title="Cobas Pure Verification",
+        title="Cobas Pure C-303/E402 Verification",
         items=items,
         date1=date1,
         date2=date2,
@@ -219,7 +226,7 @@ def attalicaverification():
 
     return render_template(
         "list_page.html",
-        title="Attalica Verification",
+        title="Siemens Attelica CI 1900 Verification",
         items=items,
         date1=date1,
         date2=date2,
@@ -300,7 +307,7 @@ def lifotronicverification():
     where = []
     params: list[str] = []
     if date1 and date2:
-        where.append("DATE(created_at) BETWEEN %s AND %s")
+        where.append("LEFT(datetime, 10) BETWEEN %s AND %s")
         params.extend([date1, date2])
 
     where_sql = ""
@@ -407,7 +414,7 @@ def lifotronicverification():
                 "sr": idx,
                 "date": as_date_label(row.get("created_at")),
                 "datetime": as_datetime_label(row.get("created_at")),
-                "time": "Weekly" if is_weekly else "Daily",
+                "time": "Monday" if is_weekly else "9 AM",
                 "status_text": status_text,
                 "status_class": status_class,
                 "status_url": status_url,
@@ -424,8 +431,8 @@ def lifotronicverification():
         timerec=timerec,
         show_time_filter=True,
         time_options=[
-            ("daily", "Daily Form"),
-            ("weekly", "Weekly Form"),
+            ("daily", "9 AM Form"),
+            ("weekly", "Monday Form"),
         ],
         pagination=pagination,
     )
@@ -462,14 +469,14 @@ def laurav2_verification():
     records = []
     if timerec in ("", "daily"):
         daily_rows = fetch_all(
-            f"SELECT id, created_at, status FROM laurav2_daily{where_sql}",
+            f"SELECT id, datetime, status FROM laurav2_daily{where_sql}",
             tuple(params),
         )
         for row in daily_rows:
             records.append(
                 {
                     "id": row.get("id"),
-                    "created_at": row.get("created_at"),
+                    "datetime": row.get("datetime"),
                     "status": row.get("status", "0"),
                     "form_type": "daily",
                 }
@@ -477,21 +484,21 @@ def laurav2_verification():
 
     if timerec in ("", "weekly"):
         weekly_rows = fetch_all(
-            f"SELECT id, created_at, status FROM laurav2_weekly{where_sql}",
+            f"SELECT id, datetime, status FROM laurav2_weekly{where_sql}",
             tuple(params),
         )
         for row in weekly_rows:
             records.append(
                 {
                     "id": row.get("id"),
-                    "created_at": row.get("created_at"),
+                    "datetime": row.get("datetime"),
                     "status": row.get("status", "0"),
                     "form_type": "weekly",
                 }
             )
 
     def sort_key(item: dict):
-        value = item.get("created_at")
+        value = item.get("datetime")
         if isinstance(value, datetime):
             return value
         raw = str(value or "").strip()
@@ -557,9 +564,9 @@ def laurav2_verification():
             {
                 "id": row["id"],
                 "sr": idx,
-                "date": as_date_label(row.get("created_at")),
-                "datetime": as_datetime_label(row.get("created_at")),
-                "time": "Weekly" if is_weekly else "Daily",
+                "date": as_date_label(row.get("datetime")),
+                "datetime": as_datetime_label(row.get("datetime")),
+                "time": "Monday" if is_weekly else "9 AM",
                 "status_text": status_text,
                 "status_class": status_class,
                 "status_url": status_url,
@@ -576,8 +583,8 @@ def laurav2_verification():
         timerec=timerec,
         show_time_filter=True,
         time_options=[
-            ("daily", "Daily Form"),
-            ("weekly", "Weekly Form"),
+            ("daily", "9 AM Form"),
+            ("weekly", "Monday Form"),
         ],
         pagination=pagination,
     )

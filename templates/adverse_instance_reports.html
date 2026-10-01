@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel verification-panel adverse-report-list-panel">
+    <div class="panel-head discard-list-head">
+      <div class="discard-list-copy">
+        <h1 class="panel-title">{{ title }}</h1>
+        <p class="panel-sub">Submitted accident, exposure, and incident reports.</p>
+      </div>
+      <a class="btn btn-primary" href="{{ url_for('main.adverse_instance_reporting') }}">New Report</a>
+    </div>
+
+    <div class="table-wrap adverse-report-table-wrap">
+      <table class="data-table adverse-report-table">
+        <thead>
+          <tr>
+            <th>Sr. No</th>
+            <th>Incident Date</th>
+            <th>Reporting Date</th>
+            <th>Nature</th>
+            <th>Staff Involved</th>
+            <th>Matter Resolved</th>
+            <th>Reported To</th>
+            <th>Created At</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+            <tr>
+              <td>{{ item.sr }}</td>
+              <td>{{ item.incident_date or "-" }}</td>
+              <td>{{ item.reporting_date or "-" }}</td>
+              <td>{{ item.incident_nature }}</td>
+              <td>{{ item.staff_involved }}</td>
+              <td>{{ item.matter_resolved }}</td>
+              <td>{{ item.reported_to }}</td>
+              <td>{{ item.created_at or "-" }}</td>
+              <td>
+                <a
+                  class="btn btn-sm btn-view"
+                  href="{{ url_for('main.adverse_instance_report_detail', report_id=item.id) }}"
+                >
+                  View
+                </a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="9" class="empty-row">No adverse incident reports found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

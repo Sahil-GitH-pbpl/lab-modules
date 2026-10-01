@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <section class="panel panel-form adverse-report-panel">
+    <div class="panel-head form-top-head">
+      <div class="form-top-brand">
+        <img src="{{ url_for('static', filename='images/Logoicon.png') }}" alt="Bhasin Lab" class="form-top-logo" />
+        <div class="form-top-brand-text">
+          <h3>Dr Bhasin's Lab</h3>
+          <span>Trust of quality &amp; service</span>
+        </div>
+      </div>
+      <div class="form-top-copy">
+        <h1 class="panel-title">Accident / Exposure / Incident Reporting Form</h1>
+        <p class="panel-sub">Record adverse incidents, corrective action, and escalation details.</p>
+      </div>
+    </div>
+
+    <form class="form-shell adverse-report-form" method="post">
+      <div class="form-section">
+        <h2>Incident Details</h2>
+        <div class="form-grid adverse-report-grid">
+          <div class="field-card">
+            <label for="incident_date" class="field-label">1. Date of Incident <span class="required-mark">*</span></label>
+            <input id="incident_date" name="incident_date" type="date" class="field-input" required />
+          </div>
+
+          <div class="field-card">
+            <label for="reporting_date" class="field-label">2. Date of Reporting</label>
+            <input id="reporting_date" name="reporting_date" type="date" class="field-input" />
+          </div>
+
+          <div class="field-card adverse-report-wide">
+            <label for="incident_nature" class="field-label">3. Nature of Incident</label>
+            <select id="incident_nature" name="incident_nature" class="field-input">
+              <option value="">Select nature of incident</option>
+              {% for option in incident_nature_options %}
+                <option value="{{ option }}">{{ option }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="field-card adverse-report-wide">
+            <label for="staff_involved" class="field-label">4. Staff Involved <span class="required-mark">*</span></label>
+            <input id="staff_involved" name="staff_involved" type="text" class="field-input" required />
+          </div>
+
+          <div class="field-card adverse-report-wide">
+            <label for="incident_details" class="field-label">5. Details of incident</label>
+            <textarea id="incident_details" name="incident_details" class="field-input adverse-report-textarea"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Action & Resolution</h2>
+        <div class="form-grid adverse-report-grid">
+          <div class="field-card">
+            <label class="field-label">6. Was there any injury/hazard to any person?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="injury_hazard" value="Yes" /> Yes</label>
+              <label><input type="radio" name="injury_hazard" value="No" /> No</label>
+            </div>
+          </div>
+
+          <div class="field-card">
+            <label class="field-label">9. Matter resolved?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="matter_resolved" value="Yes" /> Yes</label>
+              <label><input type="radio" name="matter_resolved" value="No" /> No</label>
+            </div>
+          </div>
+
+          <div class="field-card adverse-report-wide">
+            <label for="corrective_action" class="field-label">7. Corrective Action Taken</label>
+            <textarea id="corrective_action" name="corrective_action" class="field-input adverse-report-textarea"></textarea>
+          </div>
+
+          <div class="field-card adverse-report-wide">
+            <label for="preventive_action" class="field-label">8. Preventive Action Taken</label>
+            <textarea id="preventive_action" name="preventive_action" class="field-input adverse-report-textarea"></textarea>
+          </div>
+
+          <div class="field-card adverse-report-wide">
+            <label for="reported_to" class="field-label">10. Reported to <span class="required-mark">*</span></label>
+            <select id="reported_to" name="reported_to" class="field-input" required>
+              <option value="">Select reporting authority</option>
+              {% for option in reported_to_options %}
+                <option value="{{ option }}">{{ option }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary adverse-report-submit">Submit Report</button>
+    </form>
+  </section>
+{% endblock %}
